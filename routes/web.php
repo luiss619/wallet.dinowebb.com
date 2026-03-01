@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\HomeController;
 
 // Guest routes
 Route::middleware('guest')->group(function () {
@@ -28,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('movements', MovementController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 
     Route::group(['prefix' => '/'], function () {
-        Route::get('', [RoutingController::class, 'index'])->name('root');
+        Route::get('', [HomeController::class, 'index'])->name('root');
         Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
         Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
         Route::get('{any}', [RoutingController::class, 'root'])->name('any');
