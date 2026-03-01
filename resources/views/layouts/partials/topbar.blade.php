@@ -553,7 +553,7 @@
                         <img alt="user-image" class="rounded-circle me-lg-2 d-flex" src="/images/users/user-3.jpg"
                             width="32" />
                         <div class="d-lg-flex align-items-center gap-1 d-none">
-                            <h5 class="my-0">Geneva</h5>
+                            <h5 class="my-0">{{ auth()->user()->name }}</h5>
                             <i class="ti ti-chevron-down align-middle"></i>
                         </div>
                     </a>
@@ -590,10 +590,13 @@
                             <span class="align-middle">Lock Screen</span>
                         </a>
                         <!-- Logout -->
-                        <a class="dropdown-item fw-semibold" href="javascript:void(0);">
-                            <i class="ti ti-logout-2 me-1 fs-17 align-middle"></i>
-                            <span class="align-middle">Log Out</span>
-                        </a>
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
+                            @csrf
+                            <button type="submit" class="dropdown-item fw-semibold">
+                                <i class="ti ti-logout-2 me-1 fs-17 align-middle"></i>
+                                <span class="align-middle">Log Out</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
