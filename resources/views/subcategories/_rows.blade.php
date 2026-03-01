@@ -1,5 +1,6 @@
 @forelse($subcategories as $sub)
     <tr>
+        <td class="text-muted fs-xs">{{ $sub->id }}</td>
         <td class="fw-medium">{{ $sub->name }}</td>
         <td>{{ $sub->category?->name ?? '—' }}</td>
         <td>
@@ -29,6 +30,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="4" class="text-center text-muted py-4">No subcategories found.</td>
+        <td colspan="5" class="text-center text-muted py-4">No subcategories found.</td>
     </tr>
 @endforelse

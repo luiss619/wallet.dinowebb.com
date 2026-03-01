@@ -25,6 +25,7 @@
                     <table class="table table-custom table-centered table-hover w-100 mb-0">
                         <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                             <tr class="text-uppercase fs-xxs">
+                                <th data-table-sort="id" style="width:1%;">ID</th>
                                 <th data-table-sort="name">Name</th>
                                 <th data-table-sort="bank">Bank</th>
                                 <th>Account Number</th>

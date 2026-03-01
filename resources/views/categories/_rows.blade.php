@@ -1,5 +1,6 @@
 @forelse($categories as $category)
     <tr>
+        <td class="text-muted fs-xs">{{ $category->id }}</td>
         <td class="fw-medium">{{ $category->name }}</td>
         <td>
             @if($category->status)
@@ -28,6 +29,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="3" class="text-center text-muted py-4">No categories found.</td>
+        <td colspan="4" class="text-center text-muted py-4">No categories found.</td>
     </tr>
 @endforelse

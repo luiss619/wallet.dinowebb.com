@@ -7,6 +7,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\MovementController;
 
 // Guest routes
 Route::middleware('guest')->group(function () {
@@ -24,8 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('subcategories', SubcategoryController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('services',      ServiceController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 
-    // Stub (movements — step 5)
-    Route::get('/movements', fn() => abort(503, 'Coming soon'))->name('movements.index');
+    Route::resource('movements', MovementController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 
     Route::group(['prefix' => '/'], function () {
         Route::get('', [RoutingController::class, 'index'])->name('root');

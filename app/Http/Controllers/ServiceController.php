@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ServiceRequest;
 use App\Models\Category;
 use App\Models\Service;
 use App\Models\Subcategory;
@@ -31,7 +32,7 @@ class ServiceController extends Controller
                 $query->leftJoin('subcategories', 'services.subcategory_id', '=', 'subcategories.id')
                       ->select('services.*')
                       ->orderBy('subcategories.name', $dir);
-            } elseif (in_array($sort, ['name', 'status'])) {
+            } elseif (in_array($sort, ['id', 'name', 'status'])) {
                 $query->orderBy($sort, $dir);
             } else {
                 $query->orderBy('services.name');
@@ -63,30 +64,16 @@ class ServiceController extends Controller
         return response()->json($service->only('id', 'name', 'category_id', 'subcategory_id', 'status'));
     }
 
-    public function store(Request $request)
+    public function store(ServiceRequest $request)
     {
-        $request->validate([
-            'name'           => ['required', 'string', 'max:255'],
-            'category_id'    => ['nullable', 'exists:categories,id'],
-            'subcategory_id' => ['nullable', 'exists:subcategories,id'],
-            'status'         => ['required', 'in:0,1'],
-        ]);
-
-        Service::create($request->only('name', 'category_id', 'subcategory_id', 'status'));
+        Service::create($request->validated());
 
         return back()->with('success', 'Service created successfully.');
     }
 
-    public function update(Request $request, Service $service)
+    public function update(ServiceRequest $request, Service $service)
     {
-        $request->validate([
-            'name'           => ['required', 'string', 'max:255'],
-            'category_id'    => ['nullable', 'exists:categories,id'],
-            'subcategory_id' => ['nullable', 'exists:subcategories,id'],
-            'status'         => ['required', 'in:0,1'],
-        ]);
-
-        $service->update($request->only('name', 'category_id', 'subcategory_id', 'status'));
+        $service->update($request->validated());
 
         return back()->with('success', 'Service updated successfully.');
     }

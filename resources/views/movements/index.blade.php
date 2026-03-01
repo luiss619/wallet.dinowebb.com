@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Categories'])
+@extends('layouts.vertical', ['title' => 'Movements'])
 
 @section('content')
     <div class="row">
@@ -6,18 +6,18 @@
 
             <div class="card"
                 data-ajax-table
-                data-ajax-table-url="{{ route('categories.index') }}"
+                data-ajax-table-url="{{ route('movements.index') }}"
                 data-ajax-table-per-page="25">
 
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-0">Categories</h4>
+                    <h4 class="card-title mb-0">Movements</h4>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCreate">
-                        <i class="ti ti-plus me-1"></i> New Category
+                        <i class="ti ti-plus me-1"></i> New Movement
                     </button>
                 </div>
                 <div class="card-header border-0">
                     <div class="app-search" style="max-width: 300px;">
-                        <input class="form-control" data-table-search placeholder="Search categories..." type="search" />
+                        <input class="form-control" data-table-search placeholder="Search movements..." type="search" />
                         <i class="app-search-icon text-muted" data-lucide="search"></i>
                     </div>
                 </div>
@@ -26,7 +26,12 @@
                         <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                             <tr class="text-uppercase fs-xxs">
                                 <th data-table-sort="id" style="width:1%;">ID</th>
-                                <th data-table-sort="name">Name</th>
+                                <th data-table-sort="date">Date</th>
+                                <th data-table-sort="quantity">Amount</th>
+                                <th data-table-sort="account">Account</th>
+                                <th data-table-sort="service">Service</th>
+                                <th data-table-sort="category">Category</th>
+                                <th>Description</th>
                                 <th>Status</th>
                                 <th class="text-center" style="width: 1%;">Actions</th>
                             </tr>
@@ -35,7 +40,7 @@
                     </table>
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center py-2">
-                    <small data-table-pagination-info="categories"></small>
+                    <small data-table-pagination-info="movements"></small>
                     <div data-table-pagination></div>
                 </div>
             </div>
@@ -44,16 +49,22 @@
 
     <!-- Create Modal -->
     <div class="modal fade" id="modalCreate" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">New Category</h5>
+                    <h5 class="modal-title">New Movement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="{{ route('categories.store') }}" method="POST">
+                <form action="{{ route('movements.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        @include('categories._form', ['model' => null])
+                        @include('movements._form', [
+                            'model'         => null,
+                            'accounts'      => $accounts,
+                            'services'      => $services,
+                            'categories'    => $categories,
+                            'subcategories' => $subcategories,
+                        ])
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
@@ -66,16 +77,22 @@
 
     <!-- Shared Edit Modal -->
     <div class="modal fade" id="modalEdit" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Category</h5>
+                    <h5 class="modal-title">Edit Movement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST">
                     @csrf @method('PUT')
                     <div class="modal-body">
-                        @include('categories._form', ['model' => null])
+                        @include('movements._form', [
+                            'model'         => null,
+                            'accounts'      => $accounts,
+                            'services'      => $services,
+                            'categories'    => $categories,
+                            'subcategories' => $subcategories,
+                        ])
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>

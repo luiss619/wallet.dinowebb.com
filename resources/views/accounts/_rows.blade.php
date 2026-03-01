@@ -1,5 +1,6 @@
 @forelse($accounts as $account)
     <tr>
+        <td class="text-muted fs-xs">{{ $account->id }}</td>
         <td class="fw-medium">{{ $account->name }}</td>
         <td>{{ $account->bank }}</td>
         <td>{{ $account->account_number ?? '—' }}</td>
@@ -32,6 +33,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="7" class="text-center text-muted py-4">No accounts found.</td>
+        <td colspan="8" class="text-center text-muted py-4">No accounts found.</td>
     </tr>
 @endforelse

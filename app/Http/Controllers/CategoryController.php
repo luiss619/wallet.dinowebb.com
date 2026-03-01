@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class CategoryController extends Controller
             $query->where('name', 'like', "%{$s}%");
         }
 
-        $sortable = ['name', 'status'];
+        $sortable = ['id', 'name', 'status'];
         $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : 'name';
         $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
         $query->orderBy($sort, $dir);
@@ -45,26 +46,16 @@ class CategoryController extends Controller
         return response()->json($category->only('id', 'name', 'status'));
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $request->validate([
-            'name'   => ['required', 'string', 'max:255'],
-            'status' => ['required', 'in:0,1'],
-        ]);
-
-        Category::create($request->only('name', 'status'));
+        Category::create($request->validated());
 
         return back()->with('success', 'Category created successfully.');
     }
 
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        $request->validate([
-            'name'   => ['required', 'string', 'max:255'],
-            'status' => ['required', 'in:0,1'],
-        ]);
-
-        $category->update($request->only('name', 'status'));
+        $category->update($request->validated());
 
         return back()->with('success', 'Category updated successfully.');
     }

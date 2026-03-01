@@ -1,5 +1,6 @@
 @forelse($services as $service)
     <tr>
+        <td class="text-muted fs-xs">{{ $service->id }}</td>
         <td class="fw-medium">{{ $service->name }}</td>
         <td>{{ $service->category?->name ?? '—' }}</td>
         <td>{{ $service->subcategory?->name ?? '—' }}</td>
@@ -30,6 +31,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="5" class="text-center text-muted py-4">No services found.</td>
+        <td colspan="6" class="text-center text-muted py-4">No services found.</td>
     </tr>
 @endforelse
