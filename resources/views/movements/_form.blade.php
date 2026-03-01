@@ -39,32 +39,6 @@
         @endforeach
     </select>
 </div>
-<div class="row">
-    <div class="col-6 mb-3">
-        <label class="form-label">Category</label>
-        <select name="category_id" class="form-select">
-            <option value="">— None —</option>
-            @foreach($categories as $cat)
-                <option value="{{ $cat->id }}"
-                    {{ old('category_id', $model?->category_id) == $cat->id ? 'selected' : '' }}>
-                    {{ $cat->name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-    <div class="col-6 mb-3">
-        <label class="form-label">Subcategory</label>
-        <select name="subcategory_id" class="form-select">
-            <option value="">— None —</option>
-            @foreach($subcategories as $sub)
-                <option value="{{ $sub->id }}"
-                    {{ old('subcategory_id', $model?->subcategory_id) == $sub->id ? 'selected' : '' }}>
-                    {{ $sub->name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-</div>
 <div class="mb-3">
     <label class="form-label">Description</label>
     <input type="text" name="description" class="form-control" maxlength="500"

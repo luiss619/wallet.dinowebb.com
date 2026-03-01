@@ -7,7 +7,7 @@
             <div class="card"
                 data-ajax-table
                 data-ajax-table-url="{{ route('movements.index') }}"
-                data-ajax-table-per-page="25">
+                data-ajax-table-per-page="10">
 
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Movements</h4>
@@ -30,7 +30,6 @@
                                 <th data-table-sort="quantity">Amount</th>
                                 <th data-table-sort="account">Account</th>
                                 <th data-table-sort="service">Service</th>
-                                <th data-table-sort="category">Category</th>
                                 <th>Description</th>
                                 <th>Status</th>
                                 <th class="text-center" style="width: 1%;">Actions</th>
@@ -62,8 +61,6 @@
                             'model'         => null,
                             'accounts'      => $accounts,
                             'services'      => $services,
-                            'categories'    => $categories,
-                            'subcategories' => $subcategories,
                         ])
                     </div>
                     <div class="modal-footer">
@@ -90,8 +87,6 @@
                             'model'         => null,
                             'accounts'      => $accounts,
                             'services'      => $services,
-                            'categories'    => $categories,
-                            'subcategories' => $subcategories,
                         ])
                     </div>
                     <div class="modal-footer">

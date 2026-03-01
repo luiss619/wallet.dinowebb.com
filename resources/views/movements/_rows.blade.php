@@ -11,7 +11,6 @@
         </td>
         <td>{{ $mov->account?->name ?? '—' }}</td>
         <td>{{ $mov->service?->name ?? '—' }}</td>
-        <td>{{ $mov->category?->name ?? '—' }}</td>
         <td class="text-truncate" style="max-width:200px;">{{ $mov->description ?? '—' }}</td>
         <td>
             @if($mov->status)
@@ -40,6 +39,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="9" class="text-center text-muted py-4">No movements found.</td>
+        <td colspan="8" class="text-center text-muted py-4">No movements found.</td>
     </tr>
 @endforelse

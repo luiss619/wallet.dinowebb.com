@@ -7,7 +7,7 @@
             <div class="card"
                 data-ajax-table
                 data-ajax-table-url="{{ route('services.index') }}"
-                data-ajax-table-per-page="25">
+                data-ajax-table-per-page="10">
 
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Services</h4>

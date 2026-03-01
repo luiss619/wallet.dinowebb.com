@@ -13,8 +13,6 @@ class Movement extends Model
         'user_id',
         'account_id',
         'service_id',
-        'category_id',
-        'subcategory_id',
         'quantity',
         'date',
         'description',
@@ -26,9 +24,7 @@ class Movement extends Model
         'quantity' => 'decimal:2',
     ];
 
-    public function user()        { return $this->belongsTo(User::class); }
-    public function account()     { return $this->belongsTo(Account::class); }
-    public function service()     { return $this->belongsTo(Service::class); }
-    public function category()    { return $this->belongsTo(Category::class); }
-    public function subcategory() { return $this->belongsTo(Subcategory::class); }
+    public function user()    { return $this->belongsTo(User::class); }
+    public function account() { return $this->belongsTo(Account::class); }
+    public function service() { return $this->belongsTo(Service::class); }
 }
