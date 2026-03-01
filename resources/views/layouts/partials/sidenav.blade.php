@@ -79,6 +79,42 @@
         </div>
         <!--- Sidenav Menu -->
         <ul class="side-nav">
+            <li class="side-nav-title mt-2">Wallet</li>
+            <li class="side-nav-item">
+                <a class="side-nav-link {{ request()->routeIs('accounts.*') ? 'active' : '' }}"
+                    href="{{ route('accounts.index') }}">
+                    <span class="menu-icon"><i class="ti ti-building-bank"></i></span>
+                    <span class="menu-text">Accounts</span>
+                </a>
+            </li>
+            <li class="side-nav-item">
+                <a class="side-nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}"
+                    href="{{ route('services.index') }}">
+                    <span class="menu-icon"><i class="ti ti-category"></i></span>
+                    <span class="menu-text">Services</span>
+                </a>
+            </li>
+            <li class="side-nav-item">
+                <a class="side-nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}"
+                    href="{{ route('categories.index') }}">
+                    <span class="menu-icon"><i class="ti ti-tag"></i></span>
+                    <span class="menu-text">Categories</span>
+                </a>
+            </li>
+            <li class="side-nav-item">
+                <a class="side-nav-link {{ request()->routeIs('subcategories.*') ? 'active' : '' }}"
+                    href="{{ route('subcategories.index') }}">
+                    <span class="menu-icon"><i class="ti ti-tags"></i></span>
+                    <span class="menu-text">Subcategories</span>
+                </a>
+            </li>
+            <li class="side-nav-item">
+                <a class="side-nav-link {{ request()->routeIs('movements.*') ? 'active' : '' }}"
+                    href="{{ route('movements.index') }}">
+                    <span class="menu-icon"><i class="ti ti-arrows-exchange"></i></span>
+                    <span class="menu-text">Movements</span>
+                </a>
+            </li>
             <li class="side-nav-title mt-2" data-lang="menu-title">Navigation</li>
             <li class="side-nav-item">
                 <a aria-controls="sidebarDashboards" aria-expanded="false" class="side-nav-link"
