@@ -13,6 +13,7 @@ class Movement extends Model
         'user_id',
         'account_id',
         'service_id',
+        'type',
         'quantity',
         'date',
         'description',

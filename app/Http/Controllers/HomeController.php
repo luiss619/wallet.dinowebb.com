@@ -23,6 +23,18 @@ class HomeController extends Controller
             'September', 'October', 'November', 'December',
         ];
 
+        // account.balance = opening/reference balance (before all recorded movements).
+        // January start = account.balance + SUM(all movements before year-01-01).
+        // Subsequent months chain from previous month's ending balance.
+        $janStarts = [];
+        foreach ($accounts as $account) {
+            $preYear = (float) Movement::where('account_id', $account->id)
+                ->where('user_id', Auth::id())
+                ->where('date', '<', "{$year}-01-01")
+                ->sum('quantity');
+            $janStarts[$account->id] = (float) $account->balance + $preYear;
+        }
+
         $months = [];
 
         foreach ($monthNames as $idx => $monthName) {
@@ -38,45 +50,36 @@ class HomeController extends Controller
             ];
 
             foreach ($accounts as $account) {
-                $income = (float) Movement::where('account_id', $account->id)
-                    ->where('user_id', Auth::id())
-                    ->whereBetween('date', [$startDate, $endDate])
-                    ->where('quantity', '>', 0)
-                    ->sum('quantity');
+                $start = $idx === 0
+                    ? $janStarts[$account->id]
+                    : ($months[$idx - 1]['accounts'][$account->id]['balance'] ?? 0.0);
 
-                $expenses = (float) Movement::where('account_id', $account->id)
+                $base = Movement::where('account_id', $account->id)
                     ->where('user_id', Auth::id())
-                    ->whereBetween('date', [$startDate, $endDate])
-                    ->where('quantity', '<', 0)
-                    ->sum('quantity');
+                    ->whereBetween('date', [$startDate, $endDate]);
 
-                if ($idx === 0) {
-                    // Jan start = current balance minus all movements from year-01-01 onward
-                    $fromYearStart = (float) Movement::where('account_id', $account->id)
-                        ->where('user_id', Auth::id())
-                        ->where('date', '>=', "{$year}-01-01")
-                        ->sum('quantity');
-                    $start = (float) $account->balance - $fromYearStart;
-                } else {
-                    $start = $months[$idx - 1]['accounts'][$account->id]['balance'] ?? 0.0;
-                }
+                $income    = (float) (clone $base)->where('type', 0)->where('quantity', '>', 0)->sum('quantity');
+                $expenses  = (float) (clone $base)->where('type', 0)->where('quantity', '<', 0)->sum('quantity');
+                $transfers = (float) (clone $base)->where('type', 1)->sum('quantity');
 
                 $monthData['accounts'][$account->id] = [
-                    'name'     => $account->name,
-                    'start'    => $start,
-                    'income'   => $income,
-                    'expenses' => $expenses,
-                    'balance'  => $start + $income + $expenses,
+                    'name'      => $account->name,
+                    'start'     => $start,
+                    'income'    => $income,
+                    'expenses'  => $expenses,
+                    'transfers' => $transfers,
+                    'balance'   => $start + $income + $expenses + $transfers,
                 ];
             }
 
-            // Compute TOTAL row
+            // TOTAL row
             $monthData['total'] = [
-                'name'     => 'TOTAL',
-                'start'    => array_sum(array_column($monthData['accounts'], 'start')),
-                'income'   => array_sum(array_column($monthData['accounts'], 'income')),
-                'expenses' => array_sum(array_column($monthData['accounts'], 'expenses')),
-                'balance'  => array_sum(array_column($monthData['accounts'], 'balance')),
+                'name'      => 'TOTAL',
+                'start'     => array_sum(array_column($monthData['accounts'], 'start')),
+                'income'    => array_sum(array_column($monthData['accounts'], 'income')),
+                'expenses'  => array_sum(array_column($monthData['accounts'], 'expenses')),
+                'transfers' => array_sum(array_column($monthData['accounts'], 'transfers')),
+                'balance'   => array_sum(array_column($monthData['accounts'], 'balance')),
             ];
 
             $months[] = $monthData;
@@ -88,7 +91,7 @@ class HomeController extends Controller
         $maxYear     = (int) date('Y');
         $yearRange   = range(min($minYear, $maxYear), $maxYear);
 
-        // Yearly totals
+        // Yearly totals (transfers excluded from income/expense cards)
         $yearlyIncome   = array_sum(array_map(fn($m) => $m['total']['income'],   $months));
         $yearlyExpenses = array_sum(array_map(fn($m) => $m['total']['expenses'], $months));
         $yearlyNet      = $yearlyIncome + $yearlyExpenses;

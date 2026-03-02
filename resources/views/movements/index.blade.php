@@ -28,6 +28,7 @@
                                 <th data-table-sort="id" style="width:1%;">ID</th>
                                 <th data-table-sort="date">Date</th>
                                 <th data-table-sort="quantity">Amount</th>
+                                <th>Type</th>
                                 <th data-table-sort="account">Account</th>
                                 <th data-table-sort="service">Service</th>
                                 <th>Description</th>

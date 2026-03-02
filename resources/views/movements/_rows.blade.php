@@ -9,6 +9,13 @@
                 <span class="text-danger fw-semibold">{{ number_format($mov->quantity, 2) }}</span>
             @endif
         </td>
+        <td>
+            @if($mov->type == 1)
+                <span class="badge badge-soft-warning fs-xxs">Transfer</span>
+            @else
+                <span class="badge badge-soft-primary fs-xxs">Normal</span>
+            @endif
+        </td>
         <td>{{ $mov->account?->name ?? '—' }}</td>
         <td>{{ $mov->service?->name ?? '—' }}</td>
         <td class="text-truncate" style="max-width:200px;">{{ $mov->description ?? '—' }}</td>
@@ -39,6 +46,6 @@
     </tr>
 @empty
     <tr>
-        <td colspan="8" class="text-center text-muted py-4">No movements found.</td>
+        <td colspan="9" class="text-center text-muted py-4">No movements found.</td>
     </tr>
 @endforelse

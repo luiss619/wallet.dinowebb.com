@@ -17,15 +17,24 @@
             value="{{ old('date', $model?->date?->format('Y-m-d') ?? date('Y-m-d')) }}" />
     </div>
 </div>
-<div class="mb-3">
-    <label class="form-label">Amount <span class="text-danger">*</span></label>
-    <div class="input-group">
-        <span class="input-group-text">€</span>
-        <input type="number" name="quantity" class="form-control" step="0.01" required
-            placeholder="Positive = income · Negative = expense"
-            value="{{ old('quantity', $model?->quantity) }}" />
+<div class="row">
+    <div class="col-8 mb-3">
+        <label class="form-label">Amount <span class="text-danger">*</span></label>
+        <div class="input-group">
+            <span class="input-group-text">€</span>
+            <input type="number" name="quantity" class="form-control" step="0.01" required
+                placeholder="Positive = income · Negative = expense"
+                value="{{ old('quantity', $model?->quantity) }}" />
+        </div>
+        <div class="form-text">Use negative values for expenses (e.g. -45.00)</div>
     </div>
-    <div class="form-text">Use negative values for expenses (e.g. -45.00)</div>
+    <div class="col-4 mb-3">
+        <label class="form-label">Type <span class="text-danger">*</span></label>
+        <select name="type" class="form-select" required>
+            <option value="0" {{ old('type', $model?->type ?? 0) == 0 ? 'selected' : '' }}>Normal</option>
+            <option value="1" {{ old('type', $model?->type ?? 0) == 1 ? 'selected' : '' }}>Transfer</option>
+        </select>
+    </div>
 </div>
 <div class="mb-3">
     <label class="form-label">Service</label>

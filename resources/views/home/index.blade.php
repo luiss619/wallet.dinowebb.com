@@ -85,6 +85,7 @@
                                 <th class="text-end">Start</th>
                                 <th class="text-end">Income</th>
                                 <th class="text-end">Expenses</th>
+                                <th class="text-end text-secondary">Transfers</th>
                                 <th class="text-end">Balance</th>
                             </tr>
                         </thead>
@@ -109,6 +110,9 @@
                                         <td class="text-end text-danger fw-semibold">
                                             {{ number_format($acc['expenses'], 2, ',', '.') }} €
                                         </td>
+                                        <td class="text-end text-secondary">
+                                            {{ $acc['transfers'] != 0 ? number_format($acc['transfers'], 2, ',', '.') . ' €' : '—' }}
+                                        </td>
                                         <td class="text-end fw-semibold {{ $acc['balance'] >= 0 ? 'text-success' : 'text-danger' }}">
                                             {{ number_format($acc['balance'], 2, ',', '.') }} €
                                         </td>
@@ -126,6 +130,9 @@
                                     <td class="text-end text-danger">
                                         {{ number_format($month['total']['expenses'], 2, ',', '.') }} €
                                     </td>
+                                    <td class="text-end text-secondary">
+                                        {{ $month['total']['transfers'] != 0 ? number_format($month['total']['transfers'], 2, ',', '.') . ' €' : '—' }}
+                                    </td>
                                     <td class="text-end {{ $month['total']['balance'] >= 0 ? 'text-success' : 'text-danger' }}">
                                         {{ number_format($month['total']['balance'], 2, ',', '.') }} €
                                     </td>
@@ -133,18 +140,18 @@
 
                                 {{-- Month separator --}}
                                 <tr style="height: 3px; background: var(--bs-border-color);">
-                                    <td colspan="6" class="p-0"></td>
+                                    <td colspan="7" class="p-0"></td>
                                 </tr>
 
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">No data available.</td>
+                                    <td colspan="7" class="text-center text-muted py-4">No data available.</td>
                                 </tr>
                             @endforelse
 
                             @if($accounts->isEmpty())
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="7" class="text-center text-muted py-4">
                                         No active accounts found. <a href="{{ route('accounts.index') }}">Add an account</a> to get started.
                                     </td>
                                 </tr>

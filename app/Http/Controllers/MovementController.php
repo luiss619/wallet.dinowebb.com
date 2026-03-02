@@ -68,7 +68,7 @@ class MovementController extends Controller
     {
         abort_if($movement->user_id !== Auth::id(), 403);
         return response()->json($movement->only(
-            'id', 'account_id', 'service_id',
+            'id', 'account_id', 'service_id', 'type',
             'quantity', 'date', 'description', 'status'
         ));
     }
