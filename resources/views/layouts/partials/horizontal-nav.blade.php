@@ -5,7 +5,7 @@
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('second', ['dashboard', 'index']) }}">
+                        <a class="nav-link" href="{{ route('root') }}">
                             <span class="menu-icon"><i data-lucide="layout-dashboard"></i></span>
                             <span class="menu-text">Dashboard</span>
                         </a>
@@ -54,9 +54,9 @@
                             <div class="menu-arrow"></div>
                         </a>
                         <div aria-labelledby="topnav-layouts" class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('second', ['dashboard', 'index']) }}">Vertical</a>
+                            <a class="dropdown-item" href="{{ route('root') }}">Vertical</a>
                             <a class="dropdown-item"
-                                href="{{ route('second', ['layouts', 'horizontal']) }}">Horizontal</a>
+                                href="#">Horizontal</a>
                         </div>
                     </li>
                     <li class="nav-item">

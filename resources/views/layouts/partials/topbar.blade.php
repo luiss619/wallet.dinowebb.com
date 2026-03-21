@@ -5,7 +5,7 @@
             <!-- Topbar Brand Logo -->
             <div class="logo-topbar">
                 <!-- Logo light -->
-                <a class="logo-light" href="{{ route('second', ['dashboard', 'index']) }}">
+                <a class="logo-light" href="{{ route('root') }}">
                     <span class="logo-lg">
                         <img alt="logo" src="/images/logo.png" />
                     </span>
@@ -14,7 +14,7 @@
                     </span>
                 </a>
                 <!-- Logo Dark -->
-                <a class="logo-dark" href="{{ route('second', ['dashboard', 'index']) }}">
+                <a class="logo-dark" href="{{ route('root') }}">
                     <span class="logo-lg">
                         <img alt="dark logo" src="/images/logo-black.png" />
                     </span>
@@ -384,164 +384,11 @@
                     </div> <!-- End dropdown-menu -->
                 </div> <!-- end dropdown-->
             </div> <!-- end topbar item-->
-            <!-- Theme Mode Dropdown -->
-            <div class="topbar-item">
-                <div class="dropdown">
-                    <button aria-expanded="false" aria-haspopup="false" class="topbar-link" data-bs-offset="0,24"
-                        data-bs-toggle="dropdown" type="button">
-                        <i class="fs-xxl" data-lucide="layout-grid"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-lg p-2 dropdown-menu-end">
-                        <div class="row align-items-center g-1">
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title text-bg-light rounded-circle">
-                                            <img alt="Google Logo" height="18" src="/images/logos/google.svg" />
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Google</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title text-bg-light rounded-circle">
-                                            <img alt="Figma Logo" height="18" src="/images/logos/figma.svg" />
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Figma</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title text-bg-light rounded-circle">
-                                            <img alt="Slack Logo" height="18" src="/images/logos/slack.svg" />
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Slack</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title text-bg-light rounded-circle">
-                                            <img alt="Dropbox Logo" height="18" src="/images/logos/dropbox.svg" />
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Dropbox</span>
-                                </a>
-                            </div>
-                            <div class="col-4 text-center">
-                                <a class="btn btn-sm rounded-circle btn-icon btn-danger" href="javascript:void(0);">
-                                    <i class="fs-18" data-lucide="circle-plus"></i>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                            <i class="ti ti-calendar fs-18"></i>
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Calendar</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                            <i class="ti ti-message-circle fs-18"></i>
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Chat</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                            <i class="ti ti-folder fs-18"></i>
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Files</span>
-                                </a>
-                            </div>
-                            <div class="col-4">
-                                <a class="dropdown-item border border-dashed rounded text-center py-2"
-                                    href="javascript:void(0);">
-                                    <span class="avatar-sm d-block mx-auto mb-1">
-                                        <span class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                            <i class="ti ti-users fs-18"></i>
-                                        </span>
-                                    </span>
-                                    <span class="align-middle fw-medium">Team</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div> <!-- end dropdown-->
-            </div> <!-- end topbar item-->
-            <!-- Theme Mode Dropdown -->
-            <div class="topbar-item">
-                <div class="dropdown">
-                    <button aria-expanded="false" aria-haspopup="false" class="topbar-link" data-bs-offset="0,24"
-                        data-bs-toggle="dropdown" type="button">
-                        <i class="fs-xxl" data-lucide="sun"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end thememode-dropdown">
-                        <li>
-                            <label class="dropdown-item">
-                                <i class="align-middle me-1 fs-16" data-lucide="sun"></i>
-                                <span class="align-middle">Light</span>
-                                <input class="form-check-input" name="data-bs-theme" type="radio"
-                                    value="light" />
-                            </label>
-                        </li>
-                        <li>
-                            <label class="dropdown-item">
-                                <i class="align-middle me-1 fs-16" data-lucide="moon"></i>
-                                <span class="align-middle">Dark</span>
-                                <input class="form-check-input" name="data-bs-theme" type="radio"
-                                    value="dark" />
-                            </label>
-                        </li>
-                        <li>
-                            <label class="dropdown-item">
-                                <i class="align-middle me-1 fs-16" data-lucide="monitor-cog"></i>
-                                <span class="align-middle">System</span>
-                                <input class="form-check-input" name="data-bs-theme" type="radio"
-                                    value="system" />
-                            </label>
-                        </li>
-                    </ul> <!-- end dropdown-menu-->
-                </div> <!-- end dropdown-->
-            </div> <!-- end topbar item-->
             <!-- FullScreen -->
             <div class="topbar-item d-none d-sm-flex">
                 <button class="topbar-link" data-toggle="fullscreen" type="button">
                     <i class="fs-xxl fullscreen-off" data-lucide="maximize"></i>
                     <i class="fs-xxl fullscreen-on" data-lucide="minimize"></i>
-                </button>
-            </div>
-            <!-- Light/Dark Mode Button -->
-            <div class="topbar-item d-none">
-                <button class="topbar-link" id="light-dark-mode" type="button">
-                    <i class="fs-xxl mode-light-moon" data-lucide="moon"></i>
-                </button>
-            </div>
-            <!-- Monocrome Mode Button -->
-            <div class="topbar-item d-none d-sm-flex">
-                <button class="topbar-link" id="monochrome-mode" type="button">
-                    <i class="fs-xxl" data-lucide="palette"></i>
                 </button>
             </div>
             <!-- User Dropdown -->
@@ -563,7 +410,7 @@
                             <h6 class="text-overflow m-0">Welcome back 👋!</h6>
                         </div>
                         <!-- My Profile -->
-                        <a class="dropdown-item" href="{{ route('second', ['users', 'profile']) }}">
+                        <a class="dropdown-item" href="#">
                             <i class="ti ti-user-circle me-1 fs-17 align-middle"></i>
                             <span class="align-middle">Profile</span>
                         </a>
@@ -585,7 +432,7 @@
                         <!-- Divider -->
                         <div class="dropdown-divider"></div>
                         <!-- Lock -->
-                        <a class="dropdown-item" href="{{ route('second', ['auth', 'lock-screen']) }}">
+                        <a class="dropdown-item" href="#">
                             <i class="ti ti-lock me-1 fs-17 align-middle"></i>
                             <span class="align-middle">Lock Screen</span>
                         </a>
@@ -599,13 +446,6 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            <!-- Button Trigger Customizer Offcanvas -->
-            <div class="topbar-item d-none d-sm-flex">
-                <button class="topbar-link" data-bs-target="#theme-settings-offcanvas" data-bs-toggle="offcanvas"
-                    type="button">
-                    <i class="ti ti-settings icon-spin fs-24"></i>
-                </button>
             </div>
         </div>
     </div>
