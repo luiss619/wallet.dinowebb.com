@@ -11,17 +11,17 @@
 
     // Default config
     const defaultConfig = {
-        skin: "default",                // Theme skin: classic, two, three, four, five, six
+        skin: "flat",                   // Theme skin: classic, two, three, four, five, six
         monochrome: false,              // Enable monochrome mode
         theme: "light",                 // App theme: light or dark
         layout: {
             position: "fixed",          // Layout position: fixed or scrollable
         },
         topbar: {
-            color: "dark",              // Topbar color: light, dark, or gray
+            color: "gradient",          // Topbar color: light, dark, or gray
         },
         menu: {
-            color: "light",             // Menu color: light, dark, or gray
+            color: "image",             // Menu color: light, dark, or gray
         },
         sidenav: {
             size: "default",            // Sidebar size: default, collapse, or offcanvas

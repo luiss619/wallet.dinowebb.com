@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" @yield('html_attribute')>
+<html lang="es" data-skin="flat" data-bs-theme="light" data-menu-color="image" data-topbar-color="gradient" data-layout-position="fixed" data-sidenav-size="default">
 
 <head>
     @include('layouts.partials/title-meta')

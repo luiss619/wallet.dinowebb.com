@@ -1,26 +1,48 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+# --- Laravel Core ---
 /node_modules
 /public/build
 /public/hot
 /public/storage
-/public/imports
-/public/old
+/vendor
+
+# --- Environment & Keys ---
+.env
+.env.backup
+.env.production
 /storage/*.key
 /storage/pail
-/vendor
+
+# --- Testing & Logs ---
+.phpunit.result.cache
+/.phpunit.cache
+*.log
+
+# --- AI & Tools ---
+.claude/
+.claude
+.cline/
+CLAUDE.md
+
+# --- Custom Public Folders ---
+/public/_elfinder
+/public/_HERRAMIENTAS_COMERCIALES
+/public/_old
+/public/log
+/public/log_ofertas
+/public/uploads
+/public/configurador/
+/public/campañas/
+/public/old/
+/public/imports/
+
+# --- Local Development (IDEs) ---
+.DS_Store
+.idea/
+.vscode/
+.nova/
+.fleet/
+.zed/
+/auth.json
 Homestead.json
 Homestead.yaml
 Thumbs.db
