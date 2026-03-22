@@ -17,7 +17,7 @@ class MovementRequest extends FormRequest
         return [
             'account_id' => ['required', 'exists:accounts,id'],
             'service_id' => ['nullable', 'exists:services,id'],
-            'type'       => ['required', 'in:0,1'],
+            'type'       => ['required', 'in:0,1,2'],
             'quantity'   => ['required', 'numeric', 'not_in:0'],
             'date'           => ['required', 'date'],
             'description'    => ['nullable', 'string', 'max:500'],

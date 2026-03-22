@@ -12,6 +12,8 @@
         <td>
             @if($mov->type == 1)
                 <span class="badge badge-soft-warning fs-xxs">Transfer</span>
+            @elseif($mov->type == 2)
+                <span class="badge badge-soft-warning fs-xxs">Savings</span>
             @else
                 <span class="badge badge-soft-primary fs-xxs">Normal</span>
             @endif

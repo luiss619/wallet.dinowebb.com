@@ -30,5 +30,6 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['prefix' => '/'], function () {
         Route::get('', [HomeController::class, 'index'])->name('root');
+        Route::get('home/{year}/{month}', [HomeController::class, 'month'])->name('home.month');
     });
 });

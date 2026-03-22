@@ -33,18 +33,26 @@
         <select name="type" class="form-select" required>
             <option value="0" {{ old('type', $model?->type ?? 0) == 0 ? 'selected' : '' }}>Normal</option>
             <option value="1" {{ old('type', $model?->type ?? 0) == 1 ? 'selected' : '' }}>Transfer</option>
+            <option value="2" {{ old('type', $model?->type ?? 0) == 2 ? 'selected' : '' }}>Savings</option>
         </select>
     </div>
 </div>
 <div class="mb-3">
     <label class="form-label">Service</label>
+    @php
+        $grouped = $services->groupBy(fn($s) => $s->category?->name ?? 'Sin categoría')->sortKeys();
+    @endphp
     <select name="service_id" class="form-select">
         <option value="">— None —</option>
-        @foreach($services as $svc)
-            <option value="{{ $svc->id }}"
-                {{ old('service_id', $model?->service_id) == $svc->id ? 'selected' : '' }}>
-                {{ $svc->name }}
-            </option>
+        @foreach($grouped as $catName => $svcs)
+            <optgroup label="{{ $catName }}">
+                @foreach($svcs->sortBy('name') as $svc)
+                    <option value="{{ $svc->id }}"
+                        {{ old('service_id', $model?->service_id) == $svc->id ? 'selected' : '' }}>
+                        {{ $svc->name }}
+                    </option>
+                @endforeach
+            </optgroup>
         @endforeach
     </select>
 </div>

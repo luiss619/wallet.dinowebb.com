@@ -25,6 +25,16 @@ class MovementController extends Controller
                 });
             }
 
+            if ($from = $request->input('date_from')) {
+                $query->where('movements.date', '>=', $from);
+            }
+            if ($to = $request->input('date_to')) {
+                $query->where('movements.date', '<=', $to);
+            }
+            if ($accountId = $request->input('account_id')) {
+                $query->where('movements.account_id', $accountId);
+            }
+
             $sort = $request->input('sort');
             $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
 
@@ -59,7 +69,7 @@ class MovementController extends Controller
         }
 
         $accounts = Account::where('user_id', Auth::id())->where('status', 1)->orderBy('name')->get();
-        $services = Service::where('status', 1)->orderBy('name')->get();
+        $services = Service::where('status', 1)->with('category')->orderBy('name')->get();
 
         return view('movements.index', compact('accounts', 'services'));
     }

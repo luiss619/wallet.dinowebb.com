@@ -16,9 +16,28 @@
                     </button>
                 </div>
                 <div class="card-header border-0">
-                    <div class="app-search" style="max-width: 300px;">
-                        <input class="form-control" data-table-search placeholder="Search movements..." type="search" />
-                        <i class="app-search-icon text-muted" data-lucide="search"></i>
+                    <div class="d-flex flex-wrap gap-2 align-items-end">
+                        <div class="app-search" style="max-width: 240px;">
+                            <input class="form-control" data-table-search placeholder="Search..." type="search" />
+                            <i class="app-search-icon text-muted" data-lucide="search"></i>
+                        </div>
+                        <div>
+                            <label class="form-label mb-1" style="font-size:.7rem;">Desde</label>
+                            <input type="date" class="form-control form-control-sm" data-table-filter="date_from" style="min-width:130px;">
+                        </div>
+                        <div>
+                            <label class="form-label mb-1" style="font-size:.7rem;">Hasta</label>
+                            <input type="date" class="form-control form-control-sm" data-table-filter="date_to" style="min-width:130px;">
+                        </div>
+                        <div>
+                            <label class="form-label mb-1" style="font-size:.7rem;">Cuenta</label>
+                            <select class="form-select form-select-sm" data-table-filter="account_id" style="min-width:140px;">
+                                <option value="">Todas</option>
+                                @foreach($accounts as $acc)
+                                    <option value="{{ $acc->id }}">{{ $acc->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -101,5 +120,5 @@
 @endsection
 
 @section('scripts')
-    @vite(['resources/js/pages/ajax-table.js'])
+    @vite(['resources/js/pages/ajax-table.js', 'resources/js/pages/movements.js'])
 @endsection

@@ -17,13 +17,36 @@ class AjaxTable {
         this.sort     = ''
         this.dir      = 'asc'
         this.timer    = null
+        this.filters  = {}
         this.init()
     }
 
     init() {
         this.setupSearch()
         this.setupSort()
+        this.setupFilters()
+        this.restoreFromUrl()
         this.fetch()
+    }
+
+    restoreFromUrl() {
+        const params = new URLSearchParams(window.location.search)
+
+        const search = this.el.querySelector('[data-table-search]')
+        if (search && params.get('search')) {
+            search.value = params.get('search')
+            this.search  = params.get('search')
+        }
+
+        this.el.querySelectorAll('[data-table-filter]').forEach(input => {
+            const key = input.dataset.tableFilter
+            if (params.get(key)) {
+                input.value       = params.get(key)
+                this.filters[key] = params.get(key)
+            }
+        })
+
+        if (params.get('page')) this.page = parseInt(params.get('page'))
     }
 
     setupSearch() {
@@ -69,11 +92,25 @@ class AjaxTable {
         })
     }
 
+    setupFilters() {
+        this.el.querySelectorAll('[data-table-filter]').forEach(input => {
+            input.addEventListener('change', () => {
+                const key = input.dataset.tableFilter
+                this.filters[key] = input.value.trim()
+                this.page = 1
+                this.fetch()
+            })
+        })
+    }
+
     async fetch() {
         this.setLoading(true)
         const params = new URLSearchParams({ page: this.page, per_page: this.perPage })
         if (this.search) params.set('search', this.search)
         if (this.sort)   { params.set('sort', this.sort); params.set('dir', this.dir) }
+        Object.entries(this.filters).forEach(([k, v]) => { if (v) params.set(k, v) })
+
+        this.syncUrl(params)
 
         try {
             const res  = await fetch(`${this.url}?${params}`, {
@@ -88,6 +125,12 @@ class AjaxTable {
         } finally {
             this.setLoading(false)
         }
+    }
+
+    syncUrl(params) {
+        const url = new URL(window.location.href)
+        url.search = params.toString()
+        history.replaceState(null, '', url)
     }
 
     setLoading(on) {
@@ -153,7 +196,10 @@ document.addEventListener('click', async e => {
 
         for (const [key, value] of Object.entries(data)) {
             const field = form.querySelector(`[name="${key}"]`)
-            if (field) field.value = value ?? ''
+            if (field) {
+                field.value = value ?? ''
+                field.dispatchEvent(new Event('change'))
+            }
         }
 
         bootstrap.Modal.getOrCreateInstance(modal).show()

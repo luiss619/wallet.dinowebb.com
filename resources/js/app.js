@@ -17,6 +17,9 @@ window.bootstrap = bootstrap
 import {Chart} from 'chart.js/auto'
 
 import ApexCharts from 'apexcharts'
+window.ApexCharts = ApexCharts
+
+import 'select2'
 
 import flatpickr from 'flatpickr'
 
