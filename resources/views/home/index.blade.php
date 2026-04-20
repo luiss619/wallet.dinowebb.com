@@ -88,69 +88,10 @@
     @endforeach
 </div>
 
-{{-- Total Assets + Quick Insights --}}
-<div class="row g-3 mb-4">
-    <div class="col-md-7">
-        <div class="card h-100 border-0" style="background: linear-gradient(135deg, #1a3a6e 0%, #2d5aa0 100%); color:#fff;">
-            <div class="card-body p-4">
-                <p class="text-uppercase mb-1 fw-semibold" style="font-size:.65rem; opacity:.75; letter-spacing:1px;">
-                    Total Assets Under Management
-                </p>
-                <h2 class="fw-bold mb-4" style="font-size:2rem;">
-                    €{{ number_format($totalAssets, 2, ',', '.') }}
-                </h2>
-                <div class="d-flex gap-2 flex-wrap">
-                    <span class="badge rounded-pill px-3 py-2" style="background:rgba(255,255,255,.2); font-size:.75rem;">
-                        Monthly Growth&nbsp;&nbsp;<strong>{{ $monthlyGrowthPct >= 0 ? '+' : '' }}{{ $monthlyGrowthPct }}%</strong>
-                    </span>
-                    @if($latestMonth)
-                    <span class="badge rounded-pill px-3 py-2" style="background:rgba(255,255,255,.15); font-size:.75rem;">
-                        {{ $latestMonth['name'] }} Net&nbsp;&nbsp;<strong>{{ $latestNet >= 0 ? '+' : '' }}€{{ number_format($latestNet, 0, ',', '.') }}</strong>
-                    </span>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div class="card h-100">
-            <div class="card-body p-4">
-                <h6 class="fw-bold text-uppercase mb-3" style="font-size:.65rem; letter-spacing:1px;">Quick Insights</h6>
-
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="text-muted">Savings Rate</small>
-                        <small class="fw-semibold">{{ $savingsRate }}%</small>
-                    </div>
-                    <div class="progress" style="height:6px;">
-                        <div class="progress-bar" style="width:{{ $savingsRate }}%;"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Risk Profile</small>
-                        <span class="badge bg-primary rounded-pill px-3" style="font-size:.7rem;">Conservative Growth</span>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">Projected {{ $year }}</small>
-                    <small class="fw-bold {{ $yearlyNet >= 0 ? 'text-success' : 'text-danger' }}">
-                        {{ $yearlyNet >= 0 ? '+' : '' }}€{{ number_format($yearlyNet, 2, ',', '.') }}
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 {{-- Monthly Financials --}}
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
     <h5 class="fw-bold mb-0">Monthly Financials</h5>
     <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-light"><i class="ti ti-filter me-1"></i>Filter</button>
-        <button class="btn btn-sm btn-primary"><i class="ti ti-download me-1"></i>Export Report</button>
     </div>
 </div>
 
