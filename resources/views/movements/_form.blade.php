@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-8 mb-3">
         <label class="form-label">Account <span class="text-danger">*</span></label>
-        <select name="account_id" class="form-select" required>
+        <select name="account_id" class="form-select js-select2" required>
             <option value="">— Select account —</option>
             @foreach($accounts as $acc)
                 <option value="{{ $acc->id }}"
@@ -30,7 +30,7 @@
     </div>
     <div class="col-4 mb-3">
         <label class="form-label">Type <span class="text-danger">*</span></label>
-        <select name="type" class="form-select" required>
+        <select name="type" class="form-select js-select2" required>
             <option value="0" {{ old('type', $model?->type ?? 0) == 0 ? 'selected' : '' }}>Normal</option>
             <option value="1" {{ old('type', $model?->type ?? 0) == 1 ? 'selected' : '' }}>Transfer</option>
             <option value="2" {{ old('type', $model?->type ?? 0) == 2 ? 'selected' : '' }}>Savings</option>
@@ -42,7 +42,7 @@
     @php
         $grouped = $services->groupBy(fn($s) => $s->category?->name ?? 'Sin categoría')->sortKeys();
     @endphp
-    <select name="service_id" class="form-select">
+    <select name="service_id" class="form-select js-select2">
         <option value="">— None —</option>
         @foreach($grouped as $catName => $svcs)
             <optgroup label="{{ $catName }}">
@@ -63,7 +63,7 @@
 </div>
 <div class="mb-3">
     <label class="form-label">Status <span class="text-danger">*</span></label>
-    <select name="status" class="form-select" required>
+    <select name="status" class="form-select js-select2" required>
         <option value="1" {{ old('status', $model?->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
         <option value="0" {{ old('status', $model?->status ?? 1) == 0 ? 'selected' : '' }}>Inactive</option>
     </select>

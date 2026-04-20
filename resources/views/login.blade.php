@@ -135,7 +135,7 @@
                         </form>
                     </div>
                     <p class="text-center text-muted mt-4 mb-0">
-                        © UBold — by <span class="fw-semibold">Coderthemes</span>
+                        © Wallet
                     </p>
                 </div>
             </div>

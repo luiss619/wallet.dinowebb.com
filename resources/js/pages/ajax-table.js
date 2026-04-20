@@ -6,6 +6,8 @@
  *              data-ajax-table-per-page="25">
  */
 
+import Swal from 'sweetalert2'
+
 class AjaxTable {
     constructor(el) {
         this.el       = el
@@ -208,6 +210,41 @@ document.addEventListener('click', async e => {
     }
 })
 
+// ── Delete confirmation ──────────────────────────────────────────────────────
+document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-delete-form] button')
+    if (!btn) return
+    const form = btn.closest('[data-delete-form]')
+    if (!form) return
+
+    e.preventDefault()
+    Swal.fire({
+        title: '¿Eliminar?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#e3404a',
+        reverseButtons: true,
+    }).then(result => {
+        if (result.isConfirmed) form.submit()
+    })
+})
+
+// ── Flash toast ──────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-ajax-table]').forEach(el => new AjaxTable(el))
+
+    const flash = document.getElementById('flash-message')
+    if (!flash) return
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: flash.dataset.type ?? 'success',
+        title: flash.dataset.message,
+        showConfirmButton: false,
+        timer: 3500,
+        timerProgressBar: true,
+    })
 })

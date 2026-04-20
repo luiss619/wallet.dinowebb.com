@@ -88,5 +88,5 @@
 @endsection
 
 @section('scripts')
-    @vite(['resources/js/pages/ajax-table.js'])
+    @vite(['resources/js/pages/ajax-table.js', 'resources/js/pages/modal-select2.js'])
 @endsection

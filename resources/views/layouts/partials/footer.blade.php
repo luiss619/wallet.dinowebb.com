@@ -6,7 +6,7 @@
                 ©
                 <script>
                     document.write(new Date().getFullYear())
-                </script> UBold By <span class="fw-semibold">Coderthemes</span>
+                </script> Wallet
             </div>
         </div>
     </div>

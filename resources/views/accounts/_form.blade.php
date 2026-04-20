@@ -21,7 +21,7 @@
     </div>
     <div class="col-4 mb-3">
         <label class="form-label">Currency <span class="text-danger">*</span></label>
-        <select name="currency" class="form-select" required>
+        <select name="currency" class="form-select js-select2" required>
             @foreach(['EUR','USD','GBP','CHF'] as $cur)
                 <option value="{{ $cur }}" {{ old('currency', $model?->currency ?? 'EUR') === $cur ? 'selected' : '' }}>
                     {{ $cur }}
@@ -32,7 +32,7 @@
 </div>
 <div class="mb-3">
     <label class="form-label">Status <span class="text-danger">*</span></label>
-    <select name="status" class="form-select" required>
+    <select name="status" class="form-select js-select2" required>
         <option value="1" {{ old('status', $model?->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
         <option value="0" {{ old('status', $model?->status ?? 1) == 0 ? 'selected' : '' }}>Inactive</option>
     </select>

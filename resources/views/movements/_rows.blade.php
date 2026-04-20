@@ -37,7 +37,7 @@
                     <i class="ti ti-edit fs-lg"></i>
                 </button>
                 <form action="{{ route('movements.destroy', $mov) }}" method="POST"
-                    onsubmit="return confirm('Delete this movement?')">
+                    data-delete-form>
                     @csrf @method('DELETE')
                     <button class="btn btn-light btn-icon btn-sm rounded-circle" title="Delete">
                         <i class="ti ti-trash fs-lg"></i>

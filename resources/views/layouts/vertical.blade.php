@@ -28,6 +28,12 @@
 
                 @yield('content')
 
+        @if(session('success'))
+            <div id="flash-message" data-type="success" data-message="{{ session('success') }}" hidden></div>
+        @elseif(session('error'))
+            <div id="flash-message" data-type="error" data-message="{{ session('error') }}" hidden></div>
+        @endif
+
             </div>
 
             @include('layouts.partials/footer')

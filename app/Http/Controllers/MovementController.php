@@ -77,10 +77,9 @@ class MovementController extends Controller
     public function show(Movement $movement)
     {
         abort_if($movement->user_id !== Auth::id(), 403);
-        return response()->json($movement->only(
-            'id', 'account_id', 'service_id', 'type',
-            'quantity', 'date', 'description', 'status'
-        ));
+        $data = $movement->only('id', 'account_id', 'service_id', 'type', 'quantity', 'description', 'status');
+        $data['date'] = $movement->date->format('Y-m-d');
+        return response()->json($data);
     }
 
     public function store(MovementRequest $request)

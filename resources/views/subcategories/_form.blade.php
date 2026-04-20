@@ -1,6 +1,6 @@
 <div class="mb-3">
     <label class="form-label">Category <span class="text-danger">*</span></label>
-    <select name="category_id" class="form-select" required>
+    <select name="category_id" class="form-select js-select2" required>
         <option value="">— Select category —</option>
         @foreach($categories as $cat)
             <option value="{{ $cat->id }}"
@@ -17,7 +17,7 @@
 </div>
 <div class="mb-3">
     <label class="form-label">Status <span class="text-danger">*</span></label>
-    <select name="status" class="form-select" required>
+    <select name="status" class="form-select js-select2" required>
         <option value="1" {{ old('status', $model?->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
         <option value="0" {{ old('status', $model?->status ?? 1) == 0 ? 'selected' : '' }}>Inactive</option>
     </select>

@@ -19,7 +19,7 @@
                     <i class="ti ti-edit fs-lg"></i>
                 </button>
                 <form action="{{ route('subcategories.destroy', $sub) }}" method="POST"
-                    onsubmit="return confirm('Delete this subcategory?')">
+                    data-delete-form>
                     @csrf @method('DELETE')
                     <button class="btn btn-light btn-icon btn-sm rounded-circle" title="Delete">
                         <i class="ti ti-trash fs-lg"></i>
