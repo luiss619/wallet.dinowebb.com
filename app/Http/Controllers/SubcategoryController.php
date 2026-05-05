@@ -61,19 +61,19 @@ class SubcategoryController extends Controller
     {
         Subcategory::create($request->validated());
 
-        return back()->with('success', 'Subcategory created successfully.');
+        return back()->with('success', 'Subcategoría creada correctamente.');
     }
 
     public function update(SubcategoryRequest $request, Subcategory $subcategory)
     {
         $subcategory->update($request->validated());
 
-        return back()->with('success', 'Subcategory updated successfully.');
+        return back()->with('success', 'Subcategoría actualizada correctamente.');
     }
 
     public function destroy(Subcategory $subcategory)
     {
         $subcategory->delete();
-        return back()->with('success', 'Subcategory deleted successfully.');
+        return back()->with('success', 'Subcategoría eliminada correctamente.');
     }
 }

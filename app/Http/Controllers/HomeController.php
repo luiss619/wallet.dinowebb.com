@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         $year     = (int) $request->input('year', date('Y'));
         $accounts = Account::where('user_id', Auth::id())
-            ->where('status', 1)
+            ->whereIn('status', [1, 2])
             ->orderBy('id')
             ->get();
 
@@ -61,9 +61,11 @@ class HomeController extends Controller
                 $expenses  = (float) (clone $base)->where('type', 0)->where('quantity', '<', 0)->sum('quantity');
                 $transfers = (float) (clone $base)->where('type', 1)->sum('quantity');
                 $savings   = (float) (clone $base)->where('type', 2)->sum('quantity');
+                // type=3 (Paso) se ignora — no afecta a ingresos, gastos ni balance
 
                 $month_data['accounts'][$account->id] = [
                     'name'      => $account->name,
+                    'status'    => $account->status,
                     'start'     => $start,
                     'income'    => $income,
                     'expenses'  => $expenses,

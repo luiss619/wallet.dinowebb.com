@@ -50,19 +50,19 @@ class CategoryController extends Controller
     {
         Category::create($request->validated());
 
-        return back()->with('success', 'Category created successfully.');
+        return back()->with('success', 'Categoría creada correctamente.');
     }
 
     public function update(CategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
 
-        return back()->with('success', 'Category updated successfully.');
+        return back()->with('success', 'Categoría actualizada correctamente.');
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return back()->with('success', 'Category deleted successfully.');
+        return back()->with('success', 'Categoría eliminada correctamente.');
     }
 }

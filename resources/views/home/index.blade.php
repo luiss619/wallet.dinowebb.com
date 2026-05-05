@@ -123,7 +123,8 @@
                     $first      = true;
                 @endphp
                 @foreach($accounts as $acc_id => $acc)
-                <tr>
+                @php $closed = ($acc['status'] ?? 1) == 2; @endphp
+                <tr {{ $closed ? 'style=color:#6c757d;' : '' }}>
                     @if($first)
                     <td class="ps-3 py-1 align-middle text-center" rowspan="{{ $rowspan }}" style="white-space:nowrap; background:#fafafa;">
                         <a href="{{ route('home.month', [$year, $i + 1]) }}" class="home-link fw-bold text-uppercase d-block mb-1" style="font-size:.7rem; letter-spacing:.4px;">{{ strtoupper($month['name_short']) }}</a>
@@ -134,7 +135,8 @@
                     @php $first = false; @endphp
                     @endif
                     <td class="py-1">
-                        <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $acc_id }}" class="home-link fw-semibold">{{ $acc['name'] }}</a>
+                        <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $acc_id }}" class="home-link fw-semibold" {{ $closed ? 'style=color:#6c757d;' : '' }}>{{ $acc['name'] }}</a>
+                        @if($closed)<span class="badge ms-1" style="font-size:.55rem; background:#495057; color:#fff; vertical-align:middle;">CERRADA</span>@endif
                     </td>
                     <td class="text-end py-1 text-muted">{{ number_format($acc['start'], 2, ',', '.') }} €</td>
                     <td class="text-end py-1 text-success fw-semibold">{{ $acc['income'] > 0 ? '+' : '' }}{{ number_format($acc['income'], 2, ',', '.') }} €</td>

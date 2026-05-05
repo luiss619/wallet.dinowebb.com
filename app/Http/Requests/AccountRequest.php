@@ -19,7 +19,7 @@ class AccountRequest extends FormRequest
             'account_number' => ['nullable', 'string', 'max:255'],
             'balance'        => ['required', 'numeric'],
             'currency'       => ['required', 'string', 'size:3'],
-            'status'         => ['required', 'in:0,1'],
+            'status'         => ['required', 'in:0,1,2'],
         ];
     }
 }

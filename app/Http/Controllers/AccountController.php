@@ -21,7 +21,7 @@ class AccountController extends Controller
         }
 
         $sortable = ['id', 'name', 'bank', 'balance', 'currency', 'status'];
-        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : 'name';
+        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : 'id';
         $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
         $query->orderBy($sort, $dir);
 
@@ -57,7 +57,7 @@ class AccountController extends Controller
         $data['user_id'] = Auth::id();
         Account::create($data);
 
-        return back()->with('success', 'Account created successfully.');
+        return back()->with('success', 'Cuenta creada correctamente.');
     }
 
     public function update(AccountRequest $request, Account $account)
@@ -65,13 +65,13 @@ class AccountController extends Controller
         abort_if($account->user_id !== Auth::id(), 403);
         $account->update($request->validated());
 
-        return back()->with('success', 'Account updated successfully.');
+        return back()->with('success', 'Cuenta actualizada correctamente.');
     }
 
     public function destroy(Account $account)
     {
         abort_if($account->user_id !== Auth::id(), 403);
         $account->delete();
-        return back()->with('success', 'Account deleted successfully.');
+        return back()->with('success', 'Cuenta eliminada correctamente.');
     }
 }

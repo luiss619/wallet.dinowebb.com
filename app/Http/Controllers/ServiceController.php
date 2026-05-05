@@ -68,19 +68,19 @@ class ServiceController extends Controller
     {
         Service::create($request->validated());
 
-        return back()->with('success', 'Service created successfully.');
+        return back()->with('success', 'Servicio creado correctamente.');
     }
 
     public function update(ServiceRequest $request, Service $service)
     {
         $service->update($request->validated());
 
-        return back()->with('success', 'Service updated successfully.');
+        return back()->with('success', 'Servicio actualizado correctamente.');
     }
 
     public function destroy(Service $service)
     {
         $service->delete();
-        return back()->with('success', 'Service deleted successfully.');
+        return back()->with('success', 'Servicio eliminado correctamente.');
     }
 }

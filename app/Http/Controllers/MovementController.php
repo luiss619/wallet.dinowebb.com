@@ -84,11 +84,17 @@ class MovementController extends Controller
 
     public function store(MovementRequest $request)
     {
-        $data = $request->validated();
+        $data    = $request->validated();
+        $account = Account::where('id', $data['account_id'])->where('user_id', Auth::id())->firstOrFail();
+
+        if ($account->status == 2) {
+            return back()->withErrors(['account_id' => 'No se pueden añadir movimientos a una cuenta cerrada.']);
+        }
+
         $data['user_id'] = Auth::id();
         Movement::create($data);
 
-        return back()->with('success', 'Movement created successfully.');
+        return back()->with('success', 'Movimiento creado correctamente.');
     }
 
     public function update(MovementRequest $request, Movement $movement)
@@ -96,13 +102,13 @@ class MovementController extends Controller
         abort_if($movement->user_id !== Auth::id(), 403);
         $movement->update($request->validated());
 
-        return back()->with('success', 'Movement updated successfully.');
+        return back()->with('success', 'Movimiento actualizado correctamente.');
     }
 
     public function destroy(Movement $movement)
     {
         abort_if($movement->user_id !== Auth::id(), 403);
         $movement->delete();
-        return back()->with('success', 'Movement deleted successfully.');
+        return back()->with('success', 'Movimiento eliminado correctamente.');
     }
 }

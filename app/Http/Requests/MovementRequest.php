@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class MovementRequest extends FormRequest
 {
@@ -17,7 +16,7 @@ class MovementRequest extends FormRequest
         return [
             'account_id' => ['required', 'exists:accounts,id'],
             'service_id' => ['nullable', 'exists:services,id'],
-            'type'       => ['required', 'in:0,1,2'],
+            'type'       => ['required', 'in:0,1,2,3'],
             'quantity'   => ['required', 'numeric', 'not_in:0'],
             'date'           => ['required', 'date'],
             'description'    => ['nullable', 'string', 'max:500'],

@@ -16,8 +16,8 @@ class AjaxTable {
         this.page     = 1
         this.perPage  = parseInt(el.dataset.ajaxTablePerPage ?? 25)
         this.search   = ''
-        this.sort     = ''
-        this.dir      = 'asc'
+        this.sort     = el.dataset.ajaxTableSort ?? ''
+        this.dir      = el.dataset.ajaxTableDir  ?? 'asc'
         this.timer    = null
         this.filters  = {}
         this.init()
@@ -68,7 +68,10 @@ class AjaxTable {
         this.el.querySelectorAll('th[data-table-sort]').forEach(th => {
             th.style.cursor = 'pointer'
             const icon = document.createElement('i')
-            icon.className = 'ti ti-arrows-sort fs-xs ms-1'
+            const col  = th.dataset.tableSort
+            icon.className = (this.sort === col)
+                ? (this.dir === 'asc' ? 'ti ti-arrow-up fs-xs ms-1' : 'ti ti-arrow-down fs-xs ms-1')
+                : 'ti ti-arrows-sort fs-xs ms-1'
             th.appendChild(icon)
 
             th.addEventListener('click', () => {
@@ -239,12 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const flash = document.getElementById('flash-message')
     if (!flash) return
     Swal.fire({
-        toast: true,
-        position: 'top-end',
         icon: flash.dataset.type ?? 'success',
         title: flash.dataset.message,
         showConfirmButton: false,
-        timer: 3500,
+        timer: 2500,
         timerProgressBar: true,
     })
 })

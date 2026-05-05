@@ -28,6 +28,8 @@
                     <div id="flash-message" data-type="success" data-message="{{ session('success') }}" hidden></div>
                 @elseif(session('error'))
                     <div id="flash-message" data-type="error" data-message="{{ session('error') }}" hidden></div>
+                @elseif($errors->any())
+                    <div id="flash-message" data-type="error" data-message="{{ $errors->first() }}" hidden></div>
                 @endif
             </div>
             @include('layouts.partials/footer')
