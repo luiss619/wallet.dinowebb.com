@@ -4,9 +4,9 @@
 
 <div class="text-center mt-4 mb-2">
     <div class="d-flex justify-content-center gap-2">
-        @foreach(array_reverse($year_range) as $y)
+        @foreach($year_range as $y)
             <a href="?year={{ $y }}"
-               class="btn btn-sm rounded-pill px-3 {{ $y == $year ? 'btn-primary' : 'btn-light' }}">
+               class="btn btn-sm rounded-pill px-3 {{ $y == $year ? 'btn-dark' : 'btn-light' }}">
                 {{ $y }}
             </a>
         @endforeach
@@ -14,54 +14,82 @@
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h5 class="fw-bold mb-0">Resumen Anual</h5>
-    <span class="badge bg-light text-muted fw-semibold text-uppercase rounded-pill px-3 py-2" style="font-size:.65rem; letter-spacing:.5px;">Rendimiento Acumulado</span>
+    <h5 class="fw-bold mb-0 text-uppercase">Resumen Anual</h5>
 </div>
-<div class="row g-2 mb-2">
-    @foreach($months as $i => $month)
-    <div class="col-6 col-sm-4 col-md-2">
-        @if($month['has_data'])
-        <a href="{{ route('home.month', [$year, $i + 1]) }}" class="text-decoration-none">
-        @endif
-        <div class="card mb-0 {{ !$month['has_data'] ? 'border-dashed opacity-60' : '' }}"
-             style="transition: box-shadow .2s, transform .2s; cursor: {{ $month['has_data'] ? 'pointer' : 'default' }};"
-             onmouseenter="{{ $month['has_data'] ? "this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'; this.style.transform='translateY(-2px)';" : '' }}"
-             onmouseleave="{{ $month['has_data'] ? "this.style.boxShadow=''; this.style.transform='';" : '' }}">
-            <div class="card-body p-2">
-                <div class="text-uppercase fw-bold text-dark mb-1" style="font-size:.65rem;">
-                    {{ $month['name_short'] }}
-                </div>
-                @if($month['has_data'])
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Ingreso <span class="text-success fw-semibold">+{{ number_format($month['total']['income'], 2, ',', '.') }}€</span></div>
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Gasto <span class="text-danger fw-semibold">{{ number_format($month['total']['expenses'], 2, ',', '.') }}€</span></div>
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">
-                        Ahorro
-                        <span class="{{ $month['total']['savings'] != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ number_format($month['total']['savings'], 2, ',', '.') }}€</span>
-                    </div>
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">
-                        Restante
-                        <span class="{{ $month['cumulative_savings'] != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ number_format($month['cumulative_savings'], 2, ',', '.') }}€</span>
-                    </div>
-                    <div class="fw-bold mt-1 d-flex justify-content-between" style="font-size:.72rem;">
-                        <span class="text-dark">Balance</span>
-                        <span class="{{ $month['total']['balance'] >= 0 ? 'text-success' : 'text-danger' }}">
-                            {{ number_format($month['total']['balance'], 2, ',', '.') }}€
-                        </span>
-                    </div>
-                @else
-                    <div class="text-muted mt-2" style="font-size:.7rem;">Proyectado</div>
-                @endif
+@php
+    $chart_labels   = [];
+    $chart_income   = [];
+    $chart_expenses = [];
+    $chart_savings  = [];
+    foreach ($months as $m) {
+        $chart_labels[]   = $m['name_short'];
+        $chart_income[]   = $m['has_data'] ? round($m['total']['income'], 2) : null;
+        $chart_expenses[] = $m['has_data'] ? round(abs($m['total']['expenses']), 2) : null;
+        $chart_savings[]  = $m['has_data'] ? round($m['cumulative_savings'], 2) : null;
+    }
+@endphp
+<div class="row g-3 mb-4">
+    {{-- Tabla izquierda --}}
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0" style="font-size:.72rem;">
+                    <thead style="background:#f8f9fa;">
+                        <tr class="text-uppercase text-muted" style="font-size:.62rem; letter-spacing:.4px;">
+                            <th class="ps-3 py-2">Mes</th>
+                            <th class="text-end py-2">Ingreso</th>
+                            <th class="text-end py-2">Gasto</th>
+                            <th class="text-end py-2">Ahorro</th>
+                            <th class="text-end py-2">Ahorro acumulado</th>
+                            <th class="text-end pe-3 py-2">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($months as $i => $month)
+                        @php
+                            $balance_color = $month['has_data'] ? ($month['total']['balance'] >= 0 ? '#198754' : '#dc3545') : '#adb5bd';
+                        @endphp
+                        <tr class="{{ !$month['has_data'] ? 'opacity-50' : '' }}">
+                            <td class="ps-3 py-1">
+                                @if($month['has_data'])
+                                <a href="{{ route('home.month', [$year, $i + 1]) }}" class="home-link fw-bold text-uppercase" style="font-size:.7rem; letter-spacing:.4px;">{{ $month['name_short'] }}</a>
+                                @else
+                                <span class="fw-bold text-uppercase text-muted" style="font-size:.7rem; letter-spacing:.4px;">{{ $month['name_short'] }}</span>
+                                @endif
+                            </td>
+                            @if($month['has_data'])
+                            <td class="text-end text-success fw-semibold">+{{ number_format($month['total']['income'], 2, ',', '.') }}€</td>
+                            <td class="text-end text-danger fw-semibold">{{ number_format($month['total']['expenses'], 2, ',', '.') }}€</td>
+                            <td class="text-end fw-semibold" style="{{ $month['total']['savings'] != 0 ? 'color:#6ea8fe;' : 'color:#adb5bd;' }}">{{ number_format($month['total']['savings'], 2, ',', '.') }}€</td>
+                            <td class="text-end fw-semibold {{ $month['cumulative_savings'] != 0 ? 'text-dark' : 'text-muted' }}">{{ number_format($month['cumulative_savings'], 2, ',', '.') }}€</td>
+                            <td class="text-end pe-3 fw-bold" style="color: {{ $balance_color }};">{{ number_format($month['total']['balance'], 2, ',', '.') }}€</td>
+                            @else
+                            <td colspan="5" class="text-end pe-3 text-muted py-1">—</td>
+                            @endif
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
-        @if($month['has_data'])
-        </a>
-        @endif
     </div>
-    @endforeach
+    {{-- Gráfico derecha --}}
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <div id="annualChart"
+                     data-labels="{{ json_encode($chart_labels) }}"
+                     data-income="{{ json_encode($chart_income) }}"
+                     data-expenses="{{ json_encode($chart_expenses) }}"
+                     data-savings="{{ json_encode($chart_savings) }}"
+                     style="width:100%; min-height:300px;"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-    <h5 class="fw-bold mb-0">Finanzas Mensuales</h5>
+    <h5 class="fw-bold mb-0 text-uppercase">Resumen Mensual</h5>
 </div>
 
 @if($accounts->isEmpty())
@@ -69,88 +97,76 @@
         No hay cuentas activas. <a href="{{ route('accounts.index') }}">Añade una cuenta</a> para empezar.
     </div>
 @else
-    @foreach($months as $i => $month)
-    @if($month['has_data'])
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex align-items-center gap-2">
-                    <div style="width:4px; height:32px; background:#2d5aa0; border-radius:2px; flex-shrink:0;"></div>
-                    <div>
-                        <a href="{{ route('home.month', [$year, $i + 1]) }}" class="text-decoration-none text-dark">
-                            <h6 class="fw-bold mb-0">{{ $month['name'] }} {{ $year }} <i class="ti ti-external-link" style="font-size:.7rem; opacity:.5;"></i></h6>
-                        </a>
-                        <small class="text-muted">{{ $month['quarter'] }}</small>
-                    </div>
-                </div>
-                <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
-                    @if($month['cumulative_savings'] != 0)
-                    <span class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning" style="font-size:.75rem;">
-                        Ahorro Acumulado: {{ number_format($month['cumulative_savings'], 0, ',', '.') }} €
-                    </span>
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0" style="font-size:.75rem;">
+            <thead style="background:#f8f9fa; position:sticky; top:0; z-index:1;">
+                <tr class="text-uppercase text-muted" style="font-size:.62rem; letter-spacing:.4px;">
+                    <th class="ps-3 py-2">Mes</th>
+                    <th class="py-2">Cuenta</th>
+                    <th class="text-end py-2">Inicio</th>
+                    <th class="text-end py-2">Ingresos</th>
+                    <th class="text-end py-2">Gastos</th>
+                    <th class="text-end py-2">Transferencias</th>
+                    <th class="text-end py-2">Ahorros</th>
+                    <th class="text-end pe-3 py-2">Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($months as $i => $month)
+                @if($month['has_data'])
+                @php
+                    $net_color  = $month['net'] >= 0 ? '#198754' : '#dc3545';
+                    $accounts   = $month['accounts'];
+                    $multi      = count($accounts) > 1;
+                    $rowspan    = $multi ? count($accounts) + 1 : count($accounts);
+                    $first      = true;
+                @endphp
+                @foreach($accounts as $acc_id => $acc)
+                <tr>
+                    @if($first)
+                    <td class="ps-3 py-1 align-middle text-center" rowspan="{{ $rowspan }}" style="white-space:nowrap; background:#fafafa;">
+                        <a href="{{ route('home.month', [$year, $i + 1]) }}" class="home-link fw-bold text-uppercase d-block mb-1" style="font-size:.7rem; letter-spacing:.4px;">{{ strtoupper($month['name_short']) }}</a>
+                        <span class="fw-bold d-block" style="font-size:.65rem; color:{{ $net_color }};">
+                            {{ $month['net'] >= 0 ? '+' : '' }}{{ number_format($month['net'], 2, ',', '.') }}€
+                        </span>
+                    </td>
+                    @php $first = false; @endphp
                     @endif
-                    <span class="badge rounded-pill px-3 py-2 {{ $month['net'] >= 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}"
-                          style="font-size:.75rem;">
-                        {{ $month['net'] >= 0 ? 'SUPERÁVIT' : 'DÉFICIT' }}:
-                        {{ number_format($month['net'], 2, ',', '.') }} €
-                    </span>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-sm mb-0">
-                    <thead>
-                        <tr class="text-uppercase text-muted" style="font-size:.65rem; letter-spacing:.5px;">
-                            <th>Cuenta</th>
-                            <th class="text-end">Inicio</th>
-                            <th class="text-end">Ingresos</th>
-                            <th class="text-end">Gastos</th>
-                            <th class="text-end">Transferencias</th>
-                            <th class="text-end">Ahorros</th>
-                            <th class="text-end">Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($month['accounts'] as $acc_id => $acc)
-                        <tr>
-                            <td class="text-primary fw-semibold">
-                                <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $acc_id }}" class="text-decoration-none">
-                                    {{ $acc['name'] }}
-                                </a>
-                            </td>
-                            <td class="text-end">{{ number_format($acc['start'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-success fw-semibold">
-                                {{ $acc['income'] > 0 ? '+' : '' }}{{ number_format($acc['income'], 2, ',', '.') }} €
-                            </td>
-                            <td class="text-end text-danger fw-semibold">
-                                {{ number_format($acc['expenses'], 2, ',', '.') }} €
-                            </td>
-                            <td class="text-end text-muted">
-                                {{ $acc['transfers'] != 0 ? ($acc['transfers'] > 0 ? '+' : '') . number_format($acc['transfers'], 2, ',', '.') . ' €' : '-' }}
-                            </td>
-                            <td class="text-end text-warning fw-semibold">
-                                {{ $acc['savings'] != 0 ? ($acc['savings'] > 0 ? '+' : '') . number_format($acc['savings'], 2, ',', '.') . ' €' : '-' }}
-                            </td>
-                            <td class="text-end fw-bold">
-                                {{ number_format($acc['balance'], 2, ',', '.') }} €
-                            </td>
-                        </tr>
-                        @endforeach
-                        <tr class="border-top fw-bold" style="background:#f8f9fa; font-size:.8rem;">
-                            <td class="text-uppercase text-muted" style="letter-spacing:.5px;">TOTAL</td>
-                            <td class="text-end">{{ number_format($month['total']['start'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-success">{{ $month['total']['income'] > 0 ? '+' : '' }}{{ number_format($month['total']['income'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-danger">{{ number_format($month['total']['expenses'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-muted">{{ $month['total']['transfers'] != 0 ? ($month['total']['transfers'] > 0 ? '+' : '') . number_format($month['total']['transfers'], 2, ',', '.') . ' €' : '-' }}</td>
-                            <td class="text-end text-warning">{{ $month['total']['savings'] != 0 ? ($month['total']['savings'] > 0 ? '+' : '') . number_format($month['total']['savings'], 2, ',', '.') . ' €' : '-' }}</td>
-                            <td class="text-end">{{ number_format($month['total']['balance'], 2, ',', '.') }} €</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    <td class="py-1">
+                        <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $acc_id }}" class="home-link fw-semibold">{{ $acc['name'] }}</a>
+                    </td>
+                    <td class="text-end py-1 text-muted">{{ number_format($acc['start'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-success fw-semibold">{{ $acc['income'] > 0 ? '+' : '' }}{{ number_format($acc['income'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-danger fw-semibold">{{ number_format($acc['expenses'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-muted">{{ $acc['transfers'] != 0 ? ($acc['transfers'] > 0 ? '+' : '') . number_format($acc['transfers'], 2, ',', '.') . ' €' : '—' }}</td>
+                    <td class="text-end py-1 text-warning fw-semibold">{{ $acc['savings'] != 0 ? ($acc['savings'] > 0 ? '+' : '') . number_format($acc['savings'], 2, ',', '.') . ' €' : '—' }}</td>
+                    <td class="text-end pe-3 py-1 fw-bold">{{ number_format($acc['balance'], 2, ',', '.') }} €</td>
+                </tr>
+                @endforeach
+                @if($multi)
+                <tr style="background:#f8f9fa;">
+                    <td class="py-1 text-uppercase text-muted fw-bold" style="font-size:.65rem; letter-spacing:.4px;">Total</td>
+                    <td class="text-end py-1 text-muted">{{ number_format($month['total']['start'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-success fw-bold">{{ $month['total']['income'] > 0 ? '+' : '' }}{{ number_format($month['total']['income'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-danger fw-bold">{{ number_format($month['total']['expenses'], 2, ',', '.') }} €</td>
+                    <td class="text-end py-1 text-muted">{{ $month['total']['transfers'] != 0 ? ($month['total']['transfers'] > 0 ? '+' : '') . number_format($month['total']['transfers'], 2, ',', '.') . ' €' : '—' }}</td>
+                    <td class="text-end py-1 text-warning fw-bold">{{ $month['total']['savings'] != 0 ? ($month['total']['savings'] > 0 ? '+' : '') . number_format($month['total']['savings'], 2, ',', '.') . ' €' : '—' }}</td>
+                    <td class="text-end pe-3 py-1 fw-bold">{{ number_format($month['total']['balance'], 2, ',', '.') }} €</td>
+                </tr>
+                @endif
+                @endif
+                @endforeach
+            </tbody>
+        </table>
     </div>
-    @endif
-    @endforeach
+</div>
 @endif
 
 @endsection
+
+@vite(['resources/js/pages/home-index.js'])
+<style>
+    .home-link { color: #212529; text-decoration: underline; }
+    .home-link:hover { opacity: .7; }
+</style>

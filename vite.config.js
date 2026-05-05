@@ -81,6 +81,7 @@ export default defineConfig({
                 "resources/js/pages/coming-soon.js",
                 "resources/js/pages/crm-pipeline.js",
                 "resources/js/pages/ajax-table.js",
+                "resources/js/pages/home-index.js",
                 "resources/js/pages/home-month.js",
                 "resources/js/pages/modal-select2.js",
                 "resources/js/pages/movements.js",
