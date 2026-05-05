@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Category;
 use App\Models\Movement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -113,10 +115,49 @@ class HomeController extends Controller
         $monthly_growth_pct = $latest_start != 0 ? round($latest_net / abs($latest_start) * 100, 1) : 0;
         $savings_rate       = $yearly_income > 0 ? max(0, min(100, round($yearly_net / $yearly_income * 100))) : 0;
 
+        // Tabla pivote gastos por categoría
+        $expenses_raw = DB::table('movements')
+            ->join('accounts', 'movements.account_id', '=', 'accounts.id')
+            ->leftJoin('services', 'movements.service_id', '=', 'services.id')
+            ->leftJoin('categories', 'services.category_id', '=', 'categories.id')
+            ->where('movements.user_id', Auth::id())
+            ->where('movements.type', 0)
+            ->where('movements.quantity', '<', 0)
+            ->whereYear('movements.date', $year)
+            ->select(
+                DB::raw('MONTH(movements.date) as month_num'),
+                DB::raw('COALESCE(categories.name, "Sin categoría") as category'),
+                DB::raw('SUM(movements.quantity) as total')
+            )
+            ->groupBy('month_num', 'category')
+            ->get();
+
+        // Pivote: [month_num][category] = total
+        $expenses_pivot = [];
+        $expense_categories = [];
+        foreach ($expenses_raw as $row) {
+            $expenses_pivot[$row->month_num][$row->category] = (float) $row->total;
+            $expense_categories[$row->category] = true;
+        }
+        $category_order = [
+            'Seguridad Social',
+            'Informático',
+            'Impuestos',
+            'Gastos Fijos',
+            'Gastos Comida',
+            'Gastos Ocio',
+            'Gastos Extras',
+        ];
+        $known   = array_filter($category_order, fn($c) => isset($expense_categories[$c]));
+        $unknown = array_diff(array_keys($expense_categories), $category_order);
+        sort($unknown);
+        $expense_categories = array_values(array_merge($known, $unknown));
+
         return view('home.index', compact(
             'months', 'year', 'year_range', 'accounts',
             'yearly_income', 'yearly_expenses', 'yearly_net',
-            'total_assets', 'latest_net', 'monthly_growth_pct', 'savings_rate'
+            'total_assets', 'latest_net', 'monthly_growth_pct', 'savings_rate',
+            'expenses_pivot', 'expense_categories'
         ));
     }
 

@@ -92,6 +92,70 @@
     <h5 class="fw-bold mb-0 text-uppercase">Resumen Mensual</h5>
 </div>
 
+@if(!empty($expense_categories))
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+    <h5 class="fw-bold mb-0 text-uppercase">Gastos por Categoría</h5>
+</div>
+<div class="card mb-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0" style="font-size:.72rem;">
+                <thead style="background:#f8f9fa;">
+                    <tr class="text-uppercase text-muted" style="font-size:.62rem; letter-spacing:.4px;">
+                        <th class="ps-3 py-2">Mes</th>
+                        @foreach($expense_categories as $cat)
+                            <th class="text-end py-2">{{ $cat }}</th>
+                        @endforeach
+                        <th class="text-end pe-3 py-2">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($months as $i => $month)
+                    @php
+                        $month_num   = $i + 1;
+                        $month_pivot = $expenses_pivot[$month_num] ?? [];
+                        $row_total   = array_sum($month_pivot);
+                        $has_row     = $row_total != 0;
+                    @endphp
+                    <tr class="{{ !$has_row ? 'opacity-50' : '' }}">
+                        <td class="ps-3 py-1 fw-bold text-uppercase" style="font-size:.7rem; letter-spacing:.4px; white-space:nowrap;">
+                            {{ $month['name_short'] }}
+                        </td>
+                        @foreach($expense_categories as $cat)
+                        @php $val = $month_pivot[$cat] ?? 0; @endphp
+                        <td class="text-end py-1 {{ $val != 0 ? 'text-dark' : 'text-muted' }}">
+                            {{ $val != 0 ? number_format($val, 2, ',', '.') . ' €' : '—' }}
+                        </td>
+                        @endforeach
+                        <td class="text-end pe-3 py-1 fw-bold {{ $row_total != 0 ? 'text-danger' : 'text-muted' }}">
+                            {{ $row_total != 0 ? number_format($row_total, 2, ',', '.') . ' €' : '—' }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot style="background:#f8f9fa; border-top:2px solid #dee2e6;">
+                    <tr class="fw-bold">
+                        <td class="ps-3 py-2 text-uppercase text-muted" style="font-size:.65rem; letter-spacing:.4px;">Total</td>
+                        @php
+                            $grand_total = 0;
+                            $cat_totals  = [];
+                            foreach ($expense_categories as $cat) {
+                                $cat_totals[$cat] = array_sum(array_map(fn($p) => $p[$cat] ?? 0, $expenses_pivot));
+                                $grand_total += $cat_totals[$cat];
+                            }
+                        @endphp
+                        @foreach($expense_categories as $cat)
+                        <td class="text-end py-2 text-danger">{{ number_format($cat_totals[$cat], 2, ',', '.') }} €</td>
+                        @endforeach
+                        <td class="text-end pe-3 py-2 text-danger">{{ number_format($grand_total, 2, ',', '.') }} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
+
 @if($accounts->isEmpty())
     <div class="text-center text-muted py-5">
         No hay cuentas activas. <a href="{{ route('accounts.index') }}">Añade una cuenta</a> para empezar.
