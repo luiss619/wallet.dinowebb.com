@@ -2,10 +2,9 @@
 
 @section('content')
 
-{{-- Header --}}
 <div class="text-center mt-4 mb-2">
     <div class="d-flex justify-content-center gap-2">
-        @foreach(array_reverse($yearRange) as $y)
+        @foreach(array_reverse($year_range) as $y)
             <a href="?year={{ $y }}"
                class="btn btn-sm rounded-pill px-3 {{ $y == $year ? 'btn-primary' : 'btn-light' }}">
                 {{ $y }}
@@ -14,7 +13,6 @@
     </div>
 </div>
 
-{{-- Resumen Anual --}}
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h5 class="fw-bold mb-0">Resumen Anual</h5>
     <span class="badge bg-light text-muted fw-semibold text-uppercase rounded-pill px-3 py-2" style="font-size:.65rem; letter-spacing:.5px;">Rendimiento Acumulado</span>
@@ -62,7 +60,6 @@
     @endforeach
 </div>
 
-{{-- Finanzas Mensuales --}}
 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
     <h5 class="fw-bold mb-0">Finanzas Mensuales</h5>
 </div>
@@ -76,7 +73,6 @@
     @if($month['has_data'])
     <div class="card mb-3">
         <div class="card-body">
-            {{-- Month header --}}
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center gap-2">
                     <div style="width:4px; height:32px; background:#2d5aa0; border-radius:2px; flex-shrink:0;"></div>
@@ -100,8 +96,6 @@
                     </span>
                 </div>
             </div>
-
-            {{-- Accounts table --}}
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
                     <thead>
@@ -116,10 +110,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($month['accounts'] as $accId => $acc)
+                        @foreach($month['accounts'] as $acc_id => $acc)
                         <tr>
                             <td class="text-primary fw-semibold">
-                                <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $accId }}" class="text-decoration-none">
+                                <a href="{{ route('home.month', [$year, $i + 1]) }}?account_id={{ $acc_id }}" class="text-decoration-none">
                                     {{ $acc['name'] }}
                                 </a>
                             </td>
