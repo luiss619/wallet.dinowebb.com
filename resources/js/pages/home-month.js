@@ -1,37 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('expensesCategoryFilter')
+    const tbody  = document.getElementById('expensesBody')
+
+    if (select && tbody) {
+        select.addEventListener('change', () => {
+            const cat = select.value
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.style.display = (!cat || tr.dataset.category === cat) ? '' : 'none'
+            })
+        })
+    }
+
     document.querySelectorAll('[data-chart]').forEach(function (el) {
         const data  = JSON.parse(el.dataset.chart);
         const total = data.series.reduce((a, b) => a + b, 0);
 
         new ApexCharts(el, {
-            chart: { type: 'donut', height: 260, toolbar: { show: false } },
-            series: data.series,
-            labels: data.labels,
-            legend: {
-                position: 'bottom',
-                fontSize: '11px',
-                formatter: (label, opts) =>
-                    label + ' (' + ((opts.w.globals.series[opts.seriesIndex] / total) * 100).toFixed(1) + '%)',
+            chart: { type: 'bar', height: 260, toolbar: { show: false } },
+            series: [{ name: 'Importe', data: data.series }],
+            xaxis: {
+                categories: data.labels,
+                labels: { style: { fontSize: '11px' }, trim: true, maxHeight: 60 },
+            },
+            yaxis: {
+                labels: {
+                    formatter: val => val.toLocaleString('es-ES', { minimumFractionDigits: 0 }) + ' €',
+                    style: { fontSize: '10px' },
+                },
+            },
+            plotOptions: {
+                bar: { borderRadius: 4, horizontal: false, columnWidth: '55%' },
             },
             dataLabels: { enabled: false },
             tooltip: {
                 y: { formatter: val => val.toLocaleString('es-ES', { minimumFractionDigits: 2 }) + ' €' },
             },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '65%',
-                        labels: {
-                            show: true,
-                            total: {
-                                show: true,
-                                label: 'Total',
-                                formatter: () => total.toLocaleString('es-ES', { minimumFractionDigits: 2 }) + ' €',
-                            },
-                        },
-                    },
-                },
-            },
+            legend: { show: false },
             colors: data.colors,
         }).render();
     });

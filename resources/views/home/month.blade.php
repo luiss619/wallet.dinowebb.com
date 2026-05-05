@@ -29,6 +29,11 @@
             Ahorros&nbsp;&nbsp;<strong>+{{ number_format($total_savings, 2, ',', '.') }} €</strong>
         </span>
         @endif
+        @if($total_passthrough != 0)
+        <span class="badge rounded-pill px-3 py-2" style="font-size:.8rem; background:#e9ecef; color:#495057;">
+            Paso&nbsp;&nbsp;<strong>{{ $total_passthrough >= 0 ? '+' : '' }}{{ number_format($total_passthrough, 2, ',', '.') }} €</strong>
+        </span>
+        @endif
         <span class="badge rounded-pill px-3 py-2 {{ $total_balance >= 0 ? 'bg-primary' : 'bg-danger' }} text-white" style="font-size:.8rem;">
             Balance&nbsp;&nbsp;<strong>{{ number_format($total_balance, 2, ',', '.') }} €</strong>
         </span>
@@ -80,9 +85,15 @@
 @endif
 
 @if($expenses->count())
-<div class="card mb-3">
+<div class="card mb-3" id="expensesCard">
     <div class="card-header d-flex align-items-center justify-content-between py-2" style="border-left:4px solid #dc3545;">
         <span class="fw-bold text-danger"><i class="ti ti-trending-down me-2"></i>Gastos</span>
+        <select id="expensesCategoryFilter" class="form-select form-select-sm" style="width:auto; min-width:180px; font-size:.78rem;">
+            <option value="">Todas las categorías</option>
+            @foreach($expenses->groupBy(fn($m) => $m->service->category->name ?? 'Sin categoría')->sortKeys() as $catName => $catMovements)
+            <option value="{{ $catName }}">{{ $catName }} — {{ number_format(abs($catMovements->sum('quantity')), 2, ',', '.') }} €</option>
+            @endforeach
+        </select>
         <span class="fw-bold text-danger">{{ number_format($total_expenses, 2, ',', '.') }} €</span>
     </div>
     <div class="card-body p-0">
@@ -92,17 +103,18 @@
                     <table class="table table-sm table-hover mb-0">
                         <thead class="text-uppercase text-muted" style="font-size:.65rem; letter-spacing:.5px; background:#f8f9fa;">
                             <tr>
-                                <th class="ps-3">Fecha</th>
-                                @if(!$account_id)<th>Cuenta</th>@endif
-                                <th>Categoría</th>
-                                <th>Servicio</th>
-                                <th>Descripción</th>
+                                <th class="ps-3" id="expTh1">Fecha</th>
+                                @if(!$account_id)<th id="expThAccount">Cuenta</th>@endif
+                                <th id="expTh2">Categoría</th>
+                                <th id="expTh3">Servicio</th>
+                                <th id="expTh4">Descripción</th>
                                 <th class="text-end pe-3">Importe</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="expensesBody">
                             @foreach($expenses as $m)
-                            <tr>
+                            <tr data-category="{{ $m->service->category->name ?? 'Sin categoría' }}"
+                                data-amount="{{ $m->quantity }}">
                                 <td class="ps-3 text-muted" style="font-size:.8rem; white-space:nowrap;">{{ \Carbon\Carbon::parse($m->date)->format('d/m') }}</td>
                                 @if(!$account_id)<td class="text-muted" style="font-size:.8rem;">{{ $m->account->name ?? '-' }}</td>@endif
                                 <td style="font-size:.75rem;" class="text-muted">{{ $m->service->category->name ?? '-' }}</td>
@@ -199,7 +211,44 @@
 </div>
 @endif
 
-@if($income->isEmpty() && $expenses->isEmpty() && $transfers->isEmpty() && $savings->isEmpty())
+@if($passthrough->count())
+<div class="card mb-3">
+    <div class="card-header d-flex align-items-center justify-content-between py-2" style="border-left:4px solid #6c757d;">
+        <span class="fw-bold" style="color:#495057;"><i class="ti ti-arrows-right-left me-2"></i>Paso</span>
+        <span class="fw-bold" style="color:#495057;">{{ $total_passthrough >= 0 ? '+' : '' }}{{ number_format($total_passthrough, 2, ',', '.') }} €</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="text-uppercase text-muted" style="font-size:.65rem; letter-spacing:.5px; background:#f8f9fa;">
+                    <tr>
+                        <th class="ps-3">Fecha</th>
+                        @if(!$account_id)<th>Cuenta</th>@endif
+                        <th>Servicio</th>
+                        <th>Descripción</th>
+                        <th class="text-end pe-3">Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($passthrough as $m)
+                    <tr>
+                        <td class="ps-3 text-muted" style="font-size:.8rem; white-space:nowrap;">{{ \Carbon\Carbon::parse($m->date)->format('d/m') }}</td>
+                        @if(!$account_id)<td class="text-muted" style="font-size:.8rem;">{{ $m->account->name ?? '-' }}</td>@endif
+                        <td style="font-size:.8rem;">{{ $m->service->name ?? '-' }}</td>
+                        <td style="font-size:.8rem;" class="text-muted">{{ $m->description ?: '-' }}</td>
+                        <td class="text-end pe-3 fw-semibold" style="font-size:.85rem; white-space:nowrap; color:#495057;">
+                            {{ $m->quantity >= 0 ? '+' : '' }}{{ number_format($m->quantity, 2, ',', '.') }} €
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
+
+@if($income->isEmpty() && $expenses->isEmpty() && $transfers->isEmpty() && $savings->isEmpty() && $passthrough->isEmpty())
     <div class="text-center text-muted py-5">No hay movimientos para este período.</div>
 @endif
 

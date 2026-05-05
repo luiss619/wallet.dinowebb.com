@@ -137,10 +137,11 @@ class HomeController extends Controller
 
         $movements = $query->get();
 
-        $income    = $movements->filter(fn($m) => $m->type == 0 && $m->quantity > 0)->sortByDesc('quantity');
-        $expenses  = $movements->filter(fn($m) => $m->type == 0 && $m->quantity < 0)->sortBy('quantity');
-        $transfers = $movements->where('type', 1)->sortBy('date');
-        $savings   = $movements->where('type', 2)->sortBy('date');
+        $income      = $movements->filter(fn($m) => $m->type == 0 && $m->quantity > 0)->sortByDesc('quantity');
+        $expenses    = $movements->filter(fn($m) => $m->type == 0 && $m->quantity < 0)->sortBy('quantity');
+        $transfers   = $movements->where('type', 1)->sortBy('date');
+        $savings     = $movements->where('type', 2)->sortBy('date');
+        $passthrough = $movements->where('type', 3)->sortBy('date');
 
         $month_name   = ucfirst(\Carbon\Carbon::create($year, $month)->locale('es')->isoFormat('MMMM'));
         $account_name = null;
@@ -172,10 +173,11 @@ class HomeController extends Controller
             $total_balance += $start + $acc_income + $acc_expenses + $acc_transfers - $acc_savings;
         }
 
-        $total_income    = $income->sum('quantity');
-        $total_expenses  = $expenses->sum('quantity');
-        $total_transfers = $transfers->sum('quantity');
-        $total_savings   = $savings->sum('quantity');
+        $total_income      = $income->sum('quantity');
+        $total_expenses    = $expenses->sum('quantity');
+        $total_transfers   = $transfers->sum('quantity');
+        $total_savings     = $savings->sum('quantity');
+        $total_passthrough = $passthrough->sum('quantity');
 
         $income_by_service = $income
             ->groupBy(fn($m) => $m->service->name ?? 'Sin servicio')
@@ -191,9 +193,9 @@ class HomeController extends Controller
         $expenses_chart_data = $this->buildChartData($expenses_by_category, 'red');
 
         return view('home.month', compact(
-            'income', 'expenses', 'transfers', 'savings',
+            'income', 'expenses', 'transfers', 'savings', 'passthrough',
             'year', 'month', 'month_name', 'account_id', 'account_name',
-            'total_balance', 'total_income', 'total_expenses', 'total_transfers', 'total_savings',
+            'total_balance', 'total_income', 'total_expenses', 'total_transfers', 'total_savings', 'total_passthrough',
             'income_chart_data', 'expenses_chart_data'
         ));
     }
