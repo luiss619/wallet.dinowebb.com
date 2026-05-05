@@ -1,25 +1,6 @@
 @extends('layouts.vertical', ['title' => 'Dashboard'])
 
 @section('content')
-@php
-    // Find latest month with actual data
-    $latestMonth = null;
-    foreach ($months as $m) {
-        if ($m['total']['income'] != 0 || $m['total']['expenses'] != 0 || $m['total']['transfers'] != 0) {
-            $latestMonth = $m;
-        }
-    }
-
-    $totalAssets      = $latestMonth ? $latestMonth['total']['balance'] : 0;
-    $latestNet        = $latestMonth ? ($latestMonth['total']['income'] + $latestMonth['total']['expenses'] + $latestMonth['total']['transfers'] - $latestMonth['total']['savings']) : 0;
-    $latestStart      = $latestMonth ? $latestMonth['total']['start'] : 0;
-    $monthlyGrowthPct = ($latestStart != 0) ? round($latestNet / abs($latestStart) * 100, 1) : 0;
-    $savingsRate      = ($yearlyIncome > 0) ? max(0, min(100, round($yearlyNet / $yearlyIncome * 100))) : 0;
-
-    function fmtShort($n) {
-        return ($n < 0 ? '-' : '') . number_format(abs($n), 2, ',', '.') . '€';
-    }
-@endphp
 
 {{-- Header --}}
 <div class="text-center mt-4 mb-2">
@@ -33,42 +14,35 @@
     </div>
 </div>
 
-{{-- Annual Overview --}}
+{{-- Resumen Anual --}}
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h5 class="fw-bold mb-0">Annual Overview</h5>
+    <h5 class="fw-bold mb-0">Resumen Anual</h5>
     <span class="badge bg-light text-muted fw-semibold text-uppercase rounded-pill px-3 py-2" style="font-size:.65rem; letter-spacing:.5px;">Rendimiento Acumulado</span>
 </div>
 <div class="row g-2 mb-2">
-    @php $cumulativeSavingsTop = 0; @endphp
     @foreach($months as $i => $month)
-    @php
-        $hasData   = $month['total']['income'] != 0 || $month['total']['expenses'] != 0 || $month['total']['transfers'] != 0 || $month['total']['savings'] != 0;
-        $mNet      = $month['total']['income'] + $month['total']['expenses'] + $month['total']['transfers'] - $month['total']['savings'];
-        $mesEs     = ['January'=>'Enero','February'=>'Febrero','March'=>'Marzo','April'=>'Abril','May'=>'Mayo','June'=>'Junio','July'=>'Julio','August'=>'Agosto','September'=>'Septiembre','October'=>'Octubre','November'=>'Noviembre','December'=>'Diciembre'];
-        $mesNombre = strtoupper(substr($mesEs[$month['name']] ?? $month['name'], 0, 3));
-        $cumulativeSavingsTop += $month['total']['savings'];
-    @endphp
     <div class="col-6 col-sm-4 col-md-2">
-        @if($hasData)
+        @if($month['has_data'])
         <a href="{{ route('home.month', [$year, $i + 1]) }}" class="text-decoration-none">
         @endif
-        <div class="card mb-0 {{ !$hasData ? 'border-dashed opacity-60' : '' }}" style="transition: box-shadow .2s, transform .2s; cursor: {{ $hasData ? 'pointer' : 'default' }};"
-             onmouseenter="{{ $hasData ? "this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'; this.style.transform='translateY(-2px)';" : '' }}"
-             onmouseleave="{{ $hasData ? "this.style.boxShadow=''; this.style.transform='';" : '' }}">
+        <div class="card mb-0 {{ !$month['has_data'] ? 'border-dashed opacity-60' : '' }}"
+             style="transition: box-shadow .2s, transform .2s; cursor: {{ $month['has_data'] ? 'pointer' : 'default' }};"
+             onmouseenter="{{ $month['has_data'] ? "this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'; this.style.transform='translateY(-2px)';" : '' }}"
+             onmouseleave="{{ $month['has_data'] ? "this.style.boxShadow=''; this.style.transform='';" : '' }}">
             <div class="card-body p-2">
                 <div class="text-uppercase fw-bold text-dark mb-1" style="font-size:.65rem;">
-                    {{ $mesNombre }}
+                    {{ $month['name_short'] }}
                 </div>
-                @if($hasData)
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Ingreso <span class="text-success fw-semibold">+{{ fmtShort($month['total']['income']) }}</span></div>
-                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Gasto <span class="text-danger fw-semibold">{{ fmtShort($month['total']['expenses']) }}</span></div>
+                @if($month['has_data'])
+                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Ingreso <span class="text-success fw-semibold">+{{ number_format($month['total']['income'], 2, ',', '.') }}€</span></div>
+                    <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">Gasto <span class="text-danger fw-semibold">{{ number_format($month['total']['expenses'], 2, ',', '.') }}€</span></div>
                     <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">
                         Ahorro
-                        <span class="{{ $month['total']['savings'] != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ fmtShort($month['total']['savings']) }}</span>
+                        <span class="{{ $month['total']['savings'] != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ number_format($month['total']['savings'], 2, ',', '.') }}€</span>
                     </div>
                     <div style="font-size:.7rem;" class="text-muted d-flex justify-content-between">
                         Restante
-                        <span class="{{ $cumulativeSavingsTop != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ fmtShort($cumulativeSavingsTop) }}</span>
+                        <span class="{{ $month['cumulative_savings'] != 0 ? 'text-warning fw-semibold' : 'text-muted' }}">{{ number_format($month['cumulative_savings'], 2, ',', '.') }}€</span>
                     </div>
                     <div class="fw-bold mt-1 d-flex justify-content-between" style="font-size:.72rem;">
                         <span class="text-dark">Balance</span>
@@ -81,34 +55,25 @@
                 @endif
             </div>
         </div>
-        @if($hasData)
+        @if($month['has_data'])
         </a>
         @endif
     </div>
     @endforeach
 </div>
 
-{{-- Monthly Financials --}}
+{{-- Finanzas Mensuales --}}
 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-    <h5 class="fw-bold mb-0">Monthly Financials</h5>
-    <div class="d-flex gap-2">
-    </div>
+    <h5 class="fw-bold mb-0">Finanzas Mensuales</h5>
 </div>
 
 @if($accounts->isEmpty())
     <div class="text-center text-muted py-5">
-        No active accounts found. <a href="{{ route('accounts.index') }}">Add an account</a> to get started.
+        No hay cuentas activas. <a href="{{ route('accounts.index') }}">Añade una cuenta</a> para empezar.
     </div>
 @else
-    @php $cumulativeSavings = 0; @endphp
     @foreach($months as $i => $month)
-    @php
-        $hasData = $month['total']['income'] != 0 || $month['total']['expenses'] != 0 || $month['total']['transfers'] != 0 || $month['total']['savings'] != 0;
-        $mNet    = $month['total']['balance'];
-        $quarter = 'Fiscal Quarter ' . ceil(($i + 1) / 3);
-        $cumulativeSavings += $month['total']['savings'];
-    @endphp
-    @if($hasData)
+    @if($month['has_data'])
     <div class="card mb-3">
         <div class="card-body">
             {{-- Month header --}}
@@ -119,19 +84,19 @@
                         <a href="{{ route('home.month', [$year, $i + 1]) }}" class="text-decoration-none text-dark">
                             <h6 class="fw-bold mb-0">{{ $month['name'] }} {{ $year }} <i class="ti ti-external-link" style="font-size:.7rem; opacity:.5;"></i></h6>
                         </a>
-                        <small class="text-muted">{{ $quarter }}</small>
+                        <small class="text-muted">{{ $month['quarter'] }}</small>
                     </div>
                 </div>
                 <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
-                    @if($cumulativeSavings != 0)
+                    @if($month['cumulative_savings'] != 0)
                     <span class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning" style="font-size:.75rem;">
-                        Ahorro Acumulado: {{ number_format($cumulativeSavings, 0, ',', '.') }} €
+                        Ahorro Acumulado: {{ number_format($month['cumulative_savings'], 0, ',', '.') }} €
                     </span>
                     @endif
-                    <span class="badge rounded-pill px-3 py-2 {{ $mNet >= 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}"
+                    <span class="badge rounded-pill px-3 py-2 {{ $month['net'] >= 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}"
                           style="font-size:.75rem;">
-                        {{ $mNet >= 0 ? 'SURPLUS' : 'DEFICIT' }}:
-                        {{ number_format($mNet, 2, ',', '.') }} €
+                        {{ $month['net'] >= 0 ? 'SUPERÁVIT' : 'DÉFICIT' }}:
+                        {{ number_format($month['net'], 2, ',', '.') }} €
                     </span>
                 </div>
             </div>
@@ -141,12 +106,12 @@
                 <table class="table table-sm mb-0">
                     <thead>
                         <tr class="text-uppercase text-muted" style="font-size:.65rem; letter-spacing:.5px;">
-                            <th>Account</th>
-                            <th class="text-end">Start</th>
-                            <th class="text-end">Income</th>
-                            <th class="text-end">Expenses</th>
-                            <th class="text-end">Transfers</th>
-                            <th class="text-end">Savings</th>
+                            <th>Cuenta</th>
+                            <th class="text-end">Inicio</th>
+                            <th class="text-end">Ingresos</th>
+                            <th class="text-end">Gastos</th>
+                            <th class="text-end">Transferencias</th>
+                            <th class="text-end">Ahorros</th>
                             <th class="text-end">Balance</th>
                         </tr>
                     </thead>
@@ -176,15 +141,14 @@
                             </td>
                         </tr>
                         @endforeach
-                        @php $t = $month['total']; @endphp
                         <tr class="border-top fw-bold" style="background:#f8f9fa; font-size:.8rem;">
-                            <td class="text-uppercase text-muted" style="letter-spacing:.5px;">Total</td>
-                            <td class="text-end">{{ number_format($t['start'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-success">{{ $t['income'] > 0 ? '+' : '' }}{{ number_format($t['income'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-danger">{{ number_format($t['expenses'], 2, ',', '.') }} €</td>
-                            <td class="text-end text-muted">{{ $t['transfers'] != 0 ? ($t['transfers'] > 0 ? '+' : '') . number_format($t['transfers'], 2, ',', '.') . ' €' : '-' }}</td>
-                            <td class="text-end text-warning">{{ $t['savings'] != 0 ? ($t['savings'] > 0 ? '+' : '') . number_format($t['savings'], 2, ',', '.') . ' €' : '-' }}</td>
-                            <td class="text-end">{{ number_format($t['balance'], 2, ',', '.') }} €</td>
+                            <td class="text-uppercase text-muted" style="letter-spacing:.5px;">TOTAL</td>
+                            <td class="text-end">{{ number_format($month['total']['start'], 2, ',', '.') }} €</td>
+                            <td class="text-end text-success">{{ $month['total']['income'] > 0 ? '+' : '' }}{{ number_format($month['total']['income'], 2, ',', '.') }} €</td>
+                            <td class="text-end text-danger">{{ number_format($month['total']['expenses'], 2, ',', '.') }} €</td>
+                            <td class="text-end text-muted">{{ $month['total']['transfers'] != 0 ? ($month['total']['transfers'] > 0 ? '+' : '') . number_format($month['total']['transfers'], 2, ',', '.') . ' €' : '-' }}</td>
+                            <td class="text-end text-warning">{{ $month['total']['savings'] != 0 ? ($month['total']['savings'] > 0 ? '+' : '') . number_format($month['total']['savings'], 2, ',', '.') . ' €' : '-' }}</td>
+                            <td class="text-end">{{ number_format($month['total']['balance'], 2, ',', '.') }} €</td>
                         </tr>
                     </tbody>
                 </table>

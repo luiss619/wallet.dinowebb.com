@@ -14,18 +14,17 @@ class HomeController extends Controller
         $year     = (int) $request->input('year', date('Y'));
         $accounts = Account::where('user_id', Auth::id())
             ->where('status', 1)
-            ->orderBy('name')
+            ->orderBy('id')
             ->get();
 
-        $monthNames = [
-            'January', 'February', 'March', 'April',
-            'May', 'June', 'July', 'August',
-            'September', 'October', 'November', 'December',
+        $meses = [
+            'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+            'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
         ];
 
-        // account.balance = opening/reference balance (before all recorded movements).
-        // January start = account.balance + SUM(all movements before year-01-01).
-        // Subsequent months chain from previous month's ending balance.
+        // account.balance = saldo de referencia (antes de todos los movimientos registrados).
+        // Inicio de enero = account.balance + SUM(movimientos antes de year-01-01).
+        // Meses siguientes encadenan desde el saldo final del mes anterior.
         $janStarts = [];
         foreach ($accounts as $account) {
             $preYear = (float) Movement::where('account_id', $account->id)
@@ -36,14 +35,17 @@ class HomeController extends Controller
         }
 
         $months = [];
+        $cumulativeSavings = 0.0;
 
-        foreach ($monthNames as $idx => $monthName) {
+        foreach ($meses as $idx => $mes) {
             $monthNum  = $idx + 1;
             $startDate = sprintf('%04d-%02d-01', $year, $monthNum);
             $endDate   = date('Y-m-t', strtotime($startDate));
 
             $monthData = [
-                'name'       => $monthName,
+                'name'       => $mes,
+                'name_short' => strtoupper(substr($mes, 0, 3)),
+                'quarter'    => 'Trimestre ' . ceil($monthNum / 3),
                 'start_date' => $startDate,
                 'end_date'   => $endDate,
                 'accounts'   => [],
@@ -61,7 +63,6 @@ class HomeController extends Controller
                 $income    = (float) (clone $base)->where('type', 0)->where('quantity', '>', 0)->sum('quantity');
                 $expenses  = (float) (clone $base)->where('type', 0)->where('quantity', '<', 0)->sum('quantity');
                 $transfers = (float) (clone $base)->where('type', 1)->sum('quantity');
-                // type=2: savings (positive = set aside, negative = withdrawn from savings)
                 $savings   = (float) (clone $base)->where('type', 2)->sum('quantity');
 
                 $monthData['accounts'][$account->id] = [
@@ -86,6 +87,16 @@ class HomeController extends Controller
                 'balance'   => array_sum(array_column($monthData['accounts'], 'balance')),
             ];
 
+            $cumulativeSavings += $monthData['total']['savings'];
+            $hasData = $monthData['total']['income'] != 0
+                    || $monthData['total']['expenses'] != 0
+                    || $monthData['total']['transfers'] != 0
+                    || $monthData['total']['savings'] != 0;
+
+            $monthData['has_data']           = $hasData;
+            $monthData['net']                = $monthData['total']['balance'];
+            $monthData['cumulative_savings']  = $cumulativeSavings;
+
             $months[] = $monthData;
         }
 
@@ -95,15 +106,23 @@ class HomeController extends Controller
         $maxYear     = (int) date('Y');
         $yearRange   = range(min($minYear, $maxYear), $maxYear);
 
-        // Yearly totals (transfers excluded from income/expense cards)
+        // Yearly totals
         $yearlyIncome   = array_sum(array_map(fn($m) => $m['total']['income'],   $months));
         $yearlyExpenses = array_sum(array_map(fn($m) => $m['total']['expenses'], $months));
         $yearlyNet      = $yearlyIncome + $yearlyExpenses;
 
+        // Summary stats for header cards
+        $latestMonth      = collect($months)->last(fn($m) => $m['has_data']);
+        $totalAssets      = $latestMonth ? $latestMonth['total']['balance'] : 0;
+        $latestNet        = $latestMonth ? $latestMonth['net'] : 0;
+        $latestStart      = $latestMonth ? $latestMonth['total']['start'] : 0;
+        $monthlyGrowthPct = $latestStart != 0 ? round($latestNet / abs($latestStart) * 100, 1) : 0;
+        $savingsRate      = $yearlyIncome > 0 ? max(0, min(100, round($yearlyNet / $yearlyIncome * 100))) : 0;
+
         return view('home.index', compact(
-            'months', 'year', 'yearRange',
+            'months', 'year', 'yearRange', 'accounts',
             'yearlyIncome', 'yearlyExpenses', 'yearlyNet',
-            'accounts'
+            'totalAssets', 'latestNet', 'monthlyGrowthPct', 'savingsRate'
         ));
     }
 
