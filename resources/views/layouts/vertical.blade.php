@@ -19,30 +19,21 @@
 
 <body>
     <div class="wrapper">
-
         @include('layouts.partials/menu')
-
         <div class="content-page">
-
             <div class="container-fluid">
-
                 @yield('content')
 
-        @if(session('success'))
-            <div id="flash-message" data-type="success" data-message="{{ session('success') }}" hidden></div>
-        @elseif(session('error'))
-            <div id="flash-message" data-type="error" data-message="{{ session('error') }}" hidden></div>
-        @endif
-
+                @if(session('success'))
+                    <div id="flash-message" data-type="success" data-message="{{ session('success') }}" hidden></div>
+                @elseif(session('error'))
+                    <div id="flash-message" data-type="error" data-message="{{ session('error') }}" hidden></div>
+                @endif
             </div>
-
             @include('layouts.partials/footer')
-
         </div>
-
     </div>
-
-@include('layouts.partials/footer-scripts')
+    @include('layouts.partials/footer-scripts')
 </body>
 
 </html>
