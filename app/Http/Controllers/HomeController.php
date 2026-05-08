@@ -26,11 +26,17 @@ class HomeController extends Controller
 
         $jan_starts = [];
         foreach ($accounts as $account) {
-            $pre_year = (float) Movement::where('account_id', $account->id)
+            $pre_base = (float) Movement::where('account_id', $account->id)
                 ->where('user_id', Auth::id())
                 ->where('date', '<', "{$year}-01-01")
+                ->whereIn('type', [0, 1])
                 ->sum('quantity');
-            $jan_starts[$account->id] = (float) $account->balance + $pre_year;
+            $pre_savings = (float) Movement::where('account_id', $account->id)
+                ->where('user_id', Auth::id())
+                ->where('date', '<', "{$year}-01-01")
+                ->where('type', 2)
+                ->sum('quantity');
+            $jan_starts[$account->id] = (float) $account->balance + $pre_base - $pre_savings;
         }
 
         $months             = [];
@@ -64,6 +70,13 @@ class HomeController extends Controller
                 $transfers = (float) (clone $base)->where('type', 1)->sum('quantity');
                 $savings   = (float) (clone $base)->where('type', 2)->sum('quantity');
                 // type=3 (Paso) se ignora — no afecta a ingresos, gastos ni balance
+
+                $has_movements = $income || $expenses || $transfers || $savings;
+
+                // Cuenta cerrada sin movimientos: no se incluye, el mes siguiente arranca desde 0
+                if ($account->status == 2 && !$has_movements) {
+                    continue;
+                }
 
                 $month_data['accounts'][$account->id] = [
                     'name'      => $account->name,
@@ -121,6 +134,7 @@ class HomeController extends Controller
             ->leftJoin('services', 'movements.service_id', '=', 'services.id')
             ->leftJoin('categories', 'services.category_id', '=', 'categories.id')
             ->where('movements.user_id', Auth::id())
+            ->whereNull('movements.deleted_at')
             ->where('movements.type', 0)
             ->where('movements.quantity', '<', 0)
             ->whereYear('movements.date', $year)
@@ -191,7 +205,7 @@ class HomeController extends Controller
             $account_name = $account?->name;
         }
 
-        $accounts_for_balance = Account::where('user_id', Auth::id())->where('status', 1)
+        $accounts_for_balance = Account::where('user_id', Auth::id())->whereIn('status', [1, 2])
             ->when($account_id, fn($q) => $q->where('id', $account_id))
             ->get();
 
